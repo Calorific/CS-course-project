@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
+using CS_course_project.Model.Services;
+using CS_course_project.View;
 
 namespace CS_course_project.ViewModel; 
 
@@ -22,21 +22,22 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
     
     public ICommand SubmitCommand => Command.Create(LogIn);
     private void LogIn(object? sender, EventArgs e) {
-        if (!IsAdmin) {
-            MessageBox.Show(Group);
-            return;
+        var authService = new AuthService();
+        var data = IsAdmin ? Password : Group;
+        var error = authService.LogIn(data, IsAdmin);
+        Console.WriteLine(error);
+        if (error == "WRONG_PASSWORD" && IsAdmin)
+            AddError(nameof(Password), "Неверный пароль");
+        else if (error != null) {
+            AddError(nameof(Group), "Произошла ошибка. Попробуйте позже");
+        }
+        else if (IsAdmin) {
+            Navigator.Navigate.Execute(new AdminPanel(), null);
         }
         
-        var hashedPassword = Convert.ToBase64String(MD5.HashData(Encoding.UTF8.GetBytes(Password)));
-        var isValid = hashedPassword == "ICy5YqxZB1uWSwcVLSNLcA==";
-        if (!isValid) 
-            AddError(nameof(Password), "Неверный пароль");
-        else 
-            MessageBox.Show("Can enter");
-        
     }
-
-    public void OnPropertyChanged([CallerMemberName] string prop = "") {
+    
+    private void OnPropertyChanged([CallerMemberName] string prop = "") {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 
