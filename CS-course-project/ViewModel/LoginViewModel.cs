@@ -22,17 +22,16 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
     
     public ICommand SubmitCommand => Command.Create(LogIn);
     private void LogIn(object? sender, EventArgs e) {
-        var authService = new AuthService();
         var data = IsAdmin ? Password : Group;
-        var error = authService.LogIn(data, IsAdmin);
-        Console.WriteLine(error);
+        var error = AuthService.LogIn(data, IsAdmin);
+        
         if (error == "WRONG_PASSWORD" && IsAdmin)
             AddError(nameof(Password), "Неверный пароль");
         else if (error != null) {
             AddError(nameof(Group), "Произошла ошибка. Попробуйте позже");
         }
         else if (IsAdmin) {
-            Navigator.Navigate.Execute(new AdminPanel(), null);
+            Navigator.Navigate.Execute("AdminPanel", null);
         }
         
     }
@@ -40,30 +39,20 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
     private void OnPropertyChanged([CallerMemberName] string prop = "") {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
+    
+    private void OnPropertiesChanged(params string[] props) {
+        foreach (var prop in props) 
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+    }
 
     private void OnErrorsChanged(string propertyName) {
         ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
     }
 
-    private Visibility _groupVisibility;
-    public Visibility GroupVisibility {
-        get => _groupVisibility;
-        set {
-            _groupVisibility = value;
-            OnPropertyChanged();
-        }
-    }
-    
-    private Visibility _passwordVisibility;
-    public Visibility PasswordVisibility {
-        get => _passwordVisibility;
-        set {
-            _passwordVisibility = value;
-            OnPropertyChanged();
-        }
-    }
+    public Visibility GroupVisibility { get; set; }
+    public Visibility PasswordVisibility { get; set; }
 
-    private bool _isAdmin;
+    private bool _isAdmin = true;
     public bool IsAdmin {
         get => _isAdmin;
         set {
@@ -71,7 +60,7 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
             PasswordVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             GroupVisibility = !value ? Visibility.Visible : Visibility.Collapsed;
             Group = ""; Password = ""; CanSubmit = false;
-            OnPropertyChanged();
+            OnPropertiesChanged(nameof(IsAdmin), nameof(GroupVisibility), nameof(PasswordVisibility));
         }
     }
     

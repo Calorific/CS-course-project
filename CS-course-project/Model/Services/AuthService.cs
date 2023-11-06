@@ -5,8 +5,8 @@ using System.Windows;
 
 namespace CS_course_project.Model.Services; 
 
-public class AuthService {
-    public string? LogIn(string data, bool isAdmin) {
+public static class AuthService {
+    public static string? LogIn(string data, bool isAdmin) {
         if (!isAdmin) {
             MessageBox.Show(data);
             return null;

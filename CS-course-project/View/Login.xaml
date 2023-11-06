@@ -62,7 +62,7 @@
                 Text="{Binding Group}"
                 Visibility="{Binding GroupVisibility}" />
             
-            <TextBlock Margin="0 5 0 1" Foreground="Firebrick" FontSize="14"
+            <TextBlock Margin="0 5 0 0" Foreground="Firebrick" FontSize="14"
                        Text="{Binding Errors[nameof(Group)][0]}" Visibility="{Binding GroupVisibility}" />
             
             <Button Width="100px" Content="Войти" Style="{StaticResource MaterialDesignRaisedDarkButton}"

@@ -13,6 +13,11 @@ public partial class Navigator {
     }
 
     private void RenderPage(object sender, ExecutedRoutedEventArgs e) {
-        Frame.Content = e.Parameter;
+        if (e.Parameter is not string) return;
+        
+        Frame.Content = e.Parameter switch {
+            "AdminPanel" => new AdminPanel(),
+            _ => Frame.Content
+        };
     }
 }
