@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
@@ -11,14 +8,10 @@ using CS_course_project.Navigation;
 
 namespace CS_course_project.ViewModel; 
 
-public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
-    public Dictionary<string, List<string>> Errors { get; } = new();
+public class LoginViewModel : NotifyErrorsViewModel {
     public List<string> Groups { get; } = new() { "AVT-213", "ФИТ-213" };
 
     private bool _firstRender = true;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
     
     public ICommand SubmitCommand => Command.Create(LogIn);
     private void LogIn(object? sender, EventArgs e) {
@@ -35,22 +28,9 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
         }
         
     }
-    
-    private void OnPropertyChanged([CallerMemberName] string prop = "") {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-    }
-    
-    private void OnPropertiesChanged(params string[] props) {
-        foreach (var prop in props) 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-    }
 
-    private void OnErrorsChanged(string propertyName) {
-        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-    }
-
-    public Visibility GroupVisibility { get; set; }
-    public Visibility PasswordVisibility { get; set; }
+    public Visibility GroupVisibility { get; set; } = Visibility.Collapsed;
+    public Visibility PasswordVisibility { get; set; } = Visibility.Visible;
 
     private bool _isAdmin = true;
     public bool IsAdmin {
@@ -60,7 +40,7 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
             PasswordVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             GroupVisibility = !value ? Visibility.Visible : Visibility.Collapsed;
             Group = ""; Password = ""; CanSubmit = false;
-            OnPropertiesChanged(nameof(IsAdmin), nameof(GroupVisibility), nameof(PasswordVisibility));
+            NotifyAll(nameof(IsAdmin), nameof(GroupVisibility), nameof(PasswordVisibility));
         }
     }
     
@@ -77,7 +57,7 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
             else 
                 CanSubmit = true;
             
-            OnPropertyChanged();
+            Notify();
         }
     }
 
@@ -93,22 +73,16 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
                 AddError(nameof(Group), "Нужно выбрать существующую группу");
             else 
                 CanSubmit = true;
-            OnPropertyChanged();
+            Notify();
         }
     }
-    
-    public IEnumerable GetErrors(string? propertyName) {
-        return Errors!.GetValueOrDefault(propertyName, new List<string>());
-    }
-
-    public bool HasErrors => Errors.Count > 0;
 
     private bool _canSubmit;
     public bool CanSubmit {
         get => _canSubmit;
         set {
             _canSubmit = value;
-            OnPropertyChanged();
+            Notify();
         }
     }
 
@@ -123,10 +97,5 @@ public class LoginViewModel : INotifyPropertyChanged, INotifyDataErrorInfo {
     private void ClearErrors(string propertyName) {
         if (Errors.Remove(propertyName)) 
             OnErrorsChanged(propertyName);
-    }
-
-    public LoginViewModel() {
-        PasswordVisibility = Visibility.Collapsed;
-        GroupVisibility = Visibility.Visible;
     }
 }
