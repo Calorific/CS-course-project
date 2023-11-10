@@ -10,7 +10,7 @@ public class NotifyErrorsViewModel : BaseViewModel, INotifyDataErrorInfo {
     
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
     
-    protected void OnErrorsChanged(string propertyName) {
+    private void OnErrorsChanged(string propertyName) {
         ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
     }
     
@@ -18,5 +18,17 @@ public class NotifyErrorsViewModel : BaseViewModel, INotifyDataErrorInfo {
     
     public IEnumerable GetErrors(string? propertyName) {
         return Errors!.GetValueOrDefault(propertyName, new List<string>());
+    }
+    
+    protected void AddError(string propertyName, string error) {
+        if (!Errors.ContainsKey(propertyName)) 
+            Errors.Add(propertyName, new List<string>());
+        Errors[propertyName].Add(error);
+        OnErrorsChanged(propertyName);
+    }
+
+    protected void ClearErrors(string propertyName) {
+        if (Errors.Remove(propertyName)) 
+            OnErrorsChanged(propertyName);
     }
 }

@@ -3,9 +3,26 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:viewModel="clr-namespace:CS_course_project.ViewModel"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:lib="clr-namespace:CS_course_project.Lib"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d"
       Title="Settings" Height="450" Width="800">
-    <Grid>
-        <TextBlock>Settings</TextBlock>
-    </Grid>
+    <Page.DataContext>
+        <viewModel:SettingsViewModel />
+    </Page.DataContext>
+    <StackPanel>
+        <TextBox
+            VerticalAlignment="Top"
+            materialDesign:HintAssist.Hint="Длина перемены"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}">
+            <TextBox.Text>
+                <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+            <b:Interaction.Behaviors>
+                <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+            </b:Interaction.Behaviors>
+        </TextBox>
+    </StackPanel>
 </Page>

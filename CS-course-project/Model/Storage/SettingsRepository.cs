@@ -31,4 +31,12 @@ public class SettingsRepository : IRepository<Settings, Settings, bool> {
                 File.WriteAllText(Path, "");
         });
     }
+
+    public SettingsRepository() {
+        if (!Directory.Exists("./data"))
+            Directory.CreateDirectory("./data");
+        
+        if (!File.Exists(Path)) 
+            File.Create(Path).Dispose();
+    }
 }

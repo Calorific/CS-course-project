@@ -43,4 +43,12 @@ public class TimetableRepository : IRepository<Timetable, Dictionary<string, Tim
             SaveItems(data);
         });
     }
+    
+    public TimetableRepository() {
+        if (!Directory.Exists("./data"))
+            Directory.CreateDirectory("./data");
+        
+        if (!File.Exists(Path)) 
+            File.Create(Path).Dispose();
+    }
 }

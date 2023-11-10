@@ -86,16 +86,8 @@ public class LoginViewModel : NotifyErrorsViewModel {
         }
     }
 
-    private void AddError(string propertyName, string error) {
-        if (!Errors.ContainsKey(propertyName)) 
-            Errors.Add(propertyName, new List<string>());
-        Errors[propertyName].Add(error);
+    private new void AddError(string propertyName, string error) {
+        base.AddError(propertyName, error);
         CanSubmit = false;
-        OnErrorsChanged(propertyName);
-    }
-
-    private void ClearErrors(string propertyName) {
-        if (Errors.Remove(propertyName)) 
-            OnErrorsChanged(propertyName);
     }
 }
