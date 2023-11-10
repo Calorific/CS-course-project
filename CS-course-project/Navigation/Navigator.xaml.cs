@@ -18,6 +18,7 @@ public partial class Navigator {
         
         Frame.Content = e.Parameter switch {
             "AdminPanel" => new AdminPanel(),
+            "Settings" => new Settings(),
             _ => Frame.Content
         };
     }
