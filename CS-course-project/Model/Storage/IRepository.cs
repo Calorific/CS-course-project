@@ -1,7 +1,9 @@
-﻿namespace CS_course_project.model.Storage; 
+﻿using System.Threading.Tasks;
 
-public interface IRepository<in T, out TS, in TR> {
+namespace CS_course_project.model.Storage; 
+
+public interface IRepository<in T, TS, in TR> {
     void Update(T newItem);
-    TS GetData();
+    Task<TS> GetData();
     void RemoveAt(TR key);
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CS_course_project.model.Storage; 
 
@@ -14,25 +15,31 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         File.WriteAllText(_path, json);
     }
     
-    public void Update(string newGroup) {
-        var groups = GetData();
-        groups.Add(newGroup);
-        SaveItems(groups);
+    public async void Update(string newGroup) {
+        await Task.Run(async () => {
+            var groups = await GetData();
+            groups.Add(newGroup);
+            SaveItems(groups);
+        });
     }
 
-    public List<string> GetData() {
-        var json = File.ReadAllText(_path);
-        if (json.Length == 0)
-            return new List<string>();
-        var data = JsonSerializer.Deserialize<List<string>>(json);
-        return data ?? new List<string>();
+    public async Task<List<string>> GetData() {
+        return await Task.Run(() => {
+            var json = File.ReadAllText(_path);
+            if (json.Length == 0)
+                return new List<string>();
+            var data = JsonSerializer.Deserialize<List<string>>(json);
+            return data ?? new List<string>();
+        });
     }
 
-    public void RemoveAt(int key) {
-        var groups = GetData();
-        if (key > 0 && key < groups.Count) 
-            groups.RemoveAt(key);
-        SaveItems(groups);
+    public async void RemoveAt(int key) {
+        await Task.Run(async () => {
+            var groups = await GetData();
+            if (key > 0 && key < groups.Count)
+                groups.RemoveAt(key);
+            SaveItems(groups);
+        });
     }
 
     public BaseRepository(RepositoryItems type) {
