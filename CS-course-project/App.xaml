@@ -1,7 +1,7 @@
 ﻿<Application x:Class="CS_course_project.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="View/Navigator.xaml">
+             StartupUri="Navigation/Navigator.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

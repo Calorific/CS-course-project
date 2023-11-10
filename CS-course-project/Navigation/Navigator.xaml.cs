@@ -1,7 +1,8 @@
 ﻿using System.Windows.Input;
 using CS_course_project.view;
+using CS_course_project.View;
 
-namespace CS_course_project.View; 
+namespace CS_course_project.Navigation; 
 
 public partial class Navigator {
     public static RoutedCommand Navigate { get; } = new("RenderPage", typeof(Navigator));

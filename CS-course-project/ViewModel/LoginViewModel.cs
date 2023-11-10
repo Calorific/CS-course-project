@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.Model.Services;
-using CS_course_project.View;
+using CS_course_project.Navigation;
 
 namespace CS_course_project.ViewModel; 
 
