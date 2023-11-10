@@ -1,16 +1,15 @@
-﻿namespace CS_course_project.model; 
+﻿namespace CS_course_project.Model.Timetables; 
 
 public class Settings {
-    public static Settings? Self;
-
-    public int LessonDuration;
-    public int BreakDuration;
-    public int LongBreakDuration;
-    public int StartTime;
+    public int LessonDuration { get; } = 40;
+    public int BreakDuration { get; } = 10;
+    public int LongBreakDuration { get; } = 15;
+    public int StartTime { get; } = 480;
+    
+    public Settings() {}
 
     public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime) {
         LessonDuration = 0;
-        Self ??= new Settings(lessonDuration, breakDuration, longBreakDuration, startTime);
         LessonDuration = lessonDuration;
         BreakDuration = breakDuration;
         LongBreakDuration = longBreakDuration;
