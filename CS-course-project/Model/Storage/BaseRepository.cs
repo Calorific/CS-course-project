@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,11 +16,18 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         File.WriteAllText(_path, json);
     }
     
-    public async void Update(string newGroup) {
-        await Task.Run(async () => {
-            var groups = await GetData();
-            groups.Add(newGroup);
-            SaveItems(groups);
+    public async Task<bool> Update(string newGroup) {
+        return await Task.Run(async () => {
+            try {
+                var groups = await GetData();
+                groups.Add(newGroup);
+                SaveItems(groups);
+                return true;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
 
@@ -33,12 +41,19 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         });
     }
 
-    public async void RemoveAt(int key) {
-        await Task.Run(async () => {
-            var groups = await GetData();
-            if (key > 0 && key < groups.Count)
-                groups.RemoveAt(key);
-            SaveItems(groups);
+    public async Task<bool> RemoveAt(int key) {
+        return await Task.Run(async () => {
+            try {
+                var groups = await GetData();
+                if (key > 0 && key < groups.Count)
+                    groups.RemoveAt(key);
+                SaveItems(groups);
+                return true;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
 

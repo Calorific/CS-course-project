@@ -26,7 +26,6 @@ public class LoginViewModel : NotifyErrorsViewModel {
         else if (IsAdmin) {
             Navigator.Navigate.Execute("AdminPanel", null);
         }
-        
     }
 
     public Visibility GroupVisibility { get; set; } = Visibility.Collapsed;

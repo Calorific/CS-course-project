@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,11 +15,18 @@ public class TimetableRepository : IRepository<Timetable, Dictionary<string, Tim
         File.WriteAllText(Path, json);
     }
 
-    public async void Update(Timetable newItem) {
-        await Task.Run(async () => {
-            var timetables = await GetData();
-            timetables[newItem.Group] = newItem;
-            SaveItems(timetables);
+    public async Task<bool> Update(Timetable newItem) {
+        return await Task.Run(async () => {
+            try {
+                var timetables = await GetData();
+                timetables[newItem.Group] = newItem;
+                SaveItems(timetables);
+                return true;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
 
@@ -32,15 +40,22 @@ public class TimetableRepository : IRepository<Timetable, Dictionary<string, Tim
         });
     }
 
-    public async void RemoveAt(string key) {
-        await Task.Run(() => {
-            var json = File.ReadAllText(Path);
-            if (json.Length == 0)
-                return;
-            var data = JsonSerializer.Deserialize<Dictionary<string, Timetable>>(json);
-            if (data == null) return;
-            data.Remove(key);
-            SaveItems(data);
+    public async Task<bool> RemoveAt(string key) {
+        return await Task.Run(() => {
+            try {
+                var json = File.ReadAllText(Path);
+                if (json.Length == 0)
+                    return false;
+                var data = JsonSerializer.Deserialize<Dictionary<string, Timetable>>(json);
+                if (data == null) return false;
+                data.Remove(key);
+                SaveItems(data);
+                return true;
+            } 
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
     

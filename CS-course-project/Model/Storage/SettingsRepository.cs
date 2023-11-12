@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CS_course_project.Model.Timetables;
@@ -8,10 +9,17 @@ namespace CS_course_project.model.Storage;
 public class SettingsRepository : IRepository<Settings, Settings, bool> {
     private const string Path = "./data/settings.json";
     
-    public async void Update(Settings newItem) {
-        await Task.Run(() => {
-            var json = JsonSerializer.Serialize(newItem);
-            File.WriteAllText(Path, json);
+    public async Task<bool> Update(Settings newItem) {
+        return await Task.Run(() => {
+            try {
+                var json = JsonSerializer.Serialize(newItem);
+                File.WriteAllText(Path, json);
+                return true;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
 
@@ -25,10 +33,17 @@ public class SettingsRepository : IRepository<Settings, Settings, bool> {
         });
     }
 
-    public async void RemoveAt(bool key) {
-        await Task.Run(() => {
-            if (key)
+    public async Task<bool> RemoveAt(bool key) {
+        return await Task.Run(() => {
+            try {
+                if (!key) return false;
                 File.WriteAllText(Path, "");
+                return true;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Error: " + e.Message);
+                return false;
+            }
         });
     }
 

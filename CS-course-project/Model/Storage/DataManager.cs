@@ -22,6 +22,9 @@ public static class DataManager {
     
     public static async Task<List<string>> LoadSubjects() => await SubjectsRepository.GetData();
     
-    public static async Task<Settings> LoadSettings() => await SettingsRepository.GetData();
     
+    public static async Task<Settings> LoadSettings() => await SettingsRepository.GetData();
+
+    public static async Task UpdateSettings(Settings settings) => await SettingsRepository.Update(settings);
+
 }
