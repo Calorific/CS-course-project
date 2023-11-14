@@ -1,11 +1,21 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.model.Storage;
 using CS_course_project.Model.Timetables;
 
-namespace CS_course_project.ViewModel; 
+namespace CS_course_project.ViewModel;
+
+public class Test {
+    public string Name { get; set; }
+
+    public Test(string name) {
+        Name = name;
+    } 
+    
+}
 
 public partial class SettingsViewModel : NotifyErrorsViewModel {
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
@@ -18,6 +28,14 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         catch (Exception error) {
             Console.WriteLine(error.Message);
             AddError(nameof(StartTime), "Некорректное значение");
+        }
+    }
+
+    public ICommand RemoveCommand => Command.Create(RemoveItem);
+
+    private void RemoveItem(object? sender, EventArgs e) {
+        if (sender is string item) {
+            Teachers.Remove(item);
         }
     }
     
@@ -78,7 +96,17 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
 
-    private int ParseTime(string time) {
+    private ObservableCollection<string> _teachers;
+    public ObservableCollection<string> Teachers {
+        get => _teachers; 
+        private set {
+            if (_teachers == value) return;
+            _teachers = value;
+            Notify();
+        }
+    }
+
+    private static int ParseTime(string time) {
         var parts = time.Split(':');
         var res = 0;
         
@@ -96,13 +124,17 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
     
     private async void Init() {
         var settings = await DataManager.LoadSettings();
+        var teachers = await DataManager.LoadTeachers();
         LessonDuration = settings.LessonDuration.ToString();
         BreakDuration = settings.BreakDuration.ToString();
         LongBreakDuration = settings.LongBreakDuration.ToString();
         StartTime = FormatTime(settings.StartTime);
+        Teachers = new ObservableCollection<string>(teachers);
+        // Teachers = teachers;
     }
 
     public SettingsViewModel() {
+        _teachers = new ObservableCollection<string>();
         Init();
     }
 }

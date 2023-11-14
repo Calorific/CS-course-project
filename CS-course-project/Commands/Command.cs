@@ -12,5 +12,5 @@ public class Command : ICommand {
 
     public bool CanExecute(object? parameter) => CanExecuteChanged is not null;
 
-    public void Execute(object? parameter) => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    public void Execute(object? parameter) => CanExecuteChanged?.Invoke(parameter, EventArgs.Empty);
 }
