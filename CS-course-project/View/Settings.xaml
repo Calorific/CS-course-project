@@ -13,122 +13,136 @@
     <Page.DataContext>
         <viewModel:SettingsViewModel />
     </Page.DataContext>
-    <StackPanel>
-        <TextBlock Text="Настройки" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24" Margin="55 20 0 0" />
-        <Grid Margin="50 10">
-        <Grid.Resources >
-            <Style TargetType="Border" >
-                <Setter Property="Padding" Value="5,5,5,5" />
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        
-        <Border Grid.Column="0">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина урока"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="LessonDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="3" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="1">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина перемены"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="2">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина обеда"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="LongBreakDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="3">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Начало дня (8:00)"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="StartTime" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d\d?:?\d?\d?$" MaxLength="5" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="4">
-            <Button
-                Margin="0 9"
-                VerticalAlignment="Top"
-                Content="Сохранить"
-                IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                Command="{Binding SubmitCommand}" />
-        </Border>
-    </Grid>
-    <Grid Margin="50 10">
-        <Grid.Resources >
-            <Style TargetType="Border" >
-                <Setter Property="Padding" Value="5,5,5,5" />
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        
-        <Border Grid.Column="0">
-            <StackPanel>
-                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
-                <settingsPage:EditableList Items="{Binding Groups}" RemoveCommand="{Binding RemoveGroupCommand}" />
-            </StackPanel>
-        </Border>
-        <Border Grid.Column="1">
-            <StackPanel>
-                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
-                <settingsPage:EditableList Items="{Binding Teachers}" RemoveCommand="{Binding RemoveTeacherCommand}" />
-            </StackPanel>
-        </Border>
-        <Border Grid.Column="2">
-            <StackPanel>
-                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
-                <settingsPage:EditableList Items="{Binding Classrooms}" RemoveCommand="{Binding RemoveClassroomCommand}" />
-            </StackPanel>
-        </Border>
-        <Border Grid.Column="3">
-            <StackPanel>
-                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
-                <settingsPage:EditableList Items="{Binding Subjects}" RemoveCommand="{Binding RemoveSubjectCommand}" />
-            </StackPanel>
-        </Border>
-        </Grid>
-        <Button Command="{Binding Test}">Test</Button>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Margin="0 0 0 25">
+            <TextBlock Text="Настройки" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
+                       Margin="55 20 0 0" />
+            <Grid Margin="50 10">
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Padding" Value="5,5,5,5" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина урока"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="LessonDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="3" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="1">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина перемены"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="2">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина обеда"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="LongBreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="3">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Начало дня (8:00)"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="StartTime" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d\d?:?\d?\d?$" MaxLength="5" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="4">
+                    <Button
+                        Margin="0 9"
+                        VerticalAlignment="Top"
+                        Content="Сохранить"
+                        IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        Command="{Binding SubmitCommand}" />
+                </Border>
+            </Grid>
+            <Grid Margin="50 10">
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Padding" Value="5,5,5,5" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
+                        <settingsPage:EditableList
+                            Items="{Binding Groups}"
+                            RemoveCommand="{Binding RemoveGroupCommand}"
+                            AddCommand="{Binding AddGroupCommand}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
+                        <settingsPage:EditableList
+                            Items="{Binding Teachers}"
+                            RemoveCommand="{Binding RemoveTeacherCommand}"
+                            AddCommand="{Binding AddTeacherCommand}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
+                        <settingsPage:EditableList
+                            Items="{Binding Classrooms}"
+                            RemoveCommand="{Binding RemoveClassroomCommand}"
+                            AddCommand="{Binding AddClassroomCommand}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
+                        <settingsPage:EditableList
+                            Items="{Binding Subjects}"
+                            RemoveCommand="{Binding RemoveSubjectCommand}"
+                            AddCommand="{Binding AddSubjectCommand}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

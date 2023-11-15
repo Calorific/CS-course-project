@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using CS_course_project.ViewModel.UserControls;
 
 namespace CS_course_project.UserControls.SettingsPage; 
 
@@ -13,16 +14,36 @@ public partial class EditableList {
         set => SetValue(ItemsProperty, value);
     }
     
-    public static readonly DependencyProperty CommandProperty =
+    public static readonly DependencyProperty AddCommandProperty =
+        DependencyProperty.Register(nameof(AddCommand), typeof(ICommand), typeof(EditableList));
+
+    public ICommand AddCommand {
+        get => (ICommand)GetValue(AddCommandProperty);
+        set {
+            SetValue(AddCommandProperty, value);
+            Form.DataContext = new EditableListViewModel(Items, value);
+        }
+    }
+    
+    public static readonly DependencyProperty RemoveCommandProperty =
         DependencyProperty.Register(nameof(RemoveCommand), typeof(ICommand), typeof(EditableList));
 
     public ICommand RemoveCommand {
-        get => (ICommand)GetValue(CommandProperty);
-        set => SetValue(CommandProperty, value);
+        get => (ICommand)GetValue(RemoveCommandProperty);
+        set => SetValue(RemoveCommandProperty, value);
+    }
+    
+    private void OnLoad(object sender, RoutedEventArgs e) {
+        if (Form.DataContext is EditableListViewModel viewModel) {
+            viewModel.BaseCommand = AddCommand;
+            viewModel.Items = Items;
+        }
     }
     
     public EditableList() {
         InitializeComponent();
-        TeachersListBox.DataContext = this;
+        ItemListBox.DataContext = this;
+        Form.DataContext = new EditableListViewModel(Items, AddCommand);
+        Loaded += OnLoad;
     }
 }

@@ -4,9 +4,46 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lib="clr-namespace:CS_course_project.Lib"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d">
     <Grid>
-        <ListBox ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch" x:Name="TeachersListBox">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" x:Name="Form" Margin="0 7">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.85*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0"
+                    VerticalAlignment="Top"
+                    materialDesign:HintAssist.Hint="Новый элемент"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    Text="{Binding NewItem, UpdateSourceTrigger=PropertyChanged}">
+                    <b:Interaction.Behaviors>
+                        <lib:TextBoxInputRegExBehaviour MaxLength="50" />
+                    </b:Interaction.Behaviors>
+                </TextBox>
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding AddItemCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    ToolTip="Добавить" Width="20" Height="20"
+                    CommandParameter="{Binding}"
+                    Background="Transparent"    
+                    BorderBrush="Transparent"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right"
+                    Foreground="Black">
+                    <materialDesign:PackIcon Width="20" Height="20" Kind="PlusCircleOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+            
+        </StackPanel>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch" x:Name="ItemListBox">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>

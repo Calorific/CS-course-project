@@ -45,8 +45,8 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         return await Task.Run(async () => {
             try {
                 var groups = await GetData();
-                if (key > 0 && key < groups.Count)
-                    groups.RemoveAt(key);
+                if (key < 0 || key >= groups.Count) return false;
+                groups.RemoveAt(key);
                 SaveItems(groups);
                 return true;
             }

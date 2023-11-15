@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CS_course_project.Commands;
@@ -22,52 +23,74 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
 
+    #region AddCommands
+    
+    public ICommand AddGroupCommand => Command.Create(AddGroup);
+    private async void AddGroup(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        Groups.Add(item);
+        await DataManager.UpdateGroups(item);
+    }
+    
+    public ICommand AddTeacherCommand => Command.Create(AddTeacher);
+    private async void AddTeacher(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        Teachers.Add(item);
+        await DataManager.UpdateTeachers(item);
+    }
+    
+    public ICommand AddClassroomCommand => Command.Create(AddClassroom);
+    private async void AddClassroom(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        Classrooms.Add(item);
+        await DataManager.UpdateClassrooms(item);
+    }
+    
+    public ICommand AddSubjectCommand => Command.Create(AddSubject);
+    private async void AddSubject(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        Subjects.Add(item);
+        await DataManager.UpdateSubjects(item);
+    }
+    
+    #endregion
+    
+    
+    # region RemoveCommands
+    
     public ICommand RemoveGroupCommand => Command.Create(RemoveGroup);
-    private void RemoveGroup(object? sender, EventArgs e) {
-        if (sender is string item) {
-            Groups.Remove(item);
-        }
+    private async void RemoveGroup(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        var idx = Groups.IndexOf(item);
+        Groups.Remove(item);
+        await DataManager.GroupsRemoveAt(idx);
     }
     
     public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
-    private void RemoveTeacher(object? sender, EventArgs e) {
-        if (sender is string item) {
-            Teachers.Remove(item);
-        }
+    private async void RemoveTeacher(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        var idx = Teachers.IndexOf(item);
+        Teachers.Remove(item);
+        await DataManager.TeachersRemoveAt(idx);
     }
     
     public ICommand RemoveClassroomCommand => Command.Create(RemoveClassroom);
-    private void RemoveClassroom(object? sender, EventArgs e) {
-        if (sender is string item) {
-            Classrooms.Remove(item);
-        }
+    private async void RemoveClassroom(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        var idx = Classrooms.IndexOf(item);
+        Classrooms.Remove(item);
+        await DataManager.ClassroomsRemoveAt(idx);
     }
     
     public ICommand RemoveSubjectCommand => Command.Create(RemoveSubject);
-    private void RemoveSubject(object? sender, EventArgs e) {
-        if (sender is string item) {
-            Subjects.Remove(item);
-        }
+    private async void RemoveSubject(object? sender, EventArgs e) {
+        if (sender is not string item) return;
+        var idx = Subjects.IndexOf(item);
+        Subjects.Remove(item);
+        await DataManager.SubjectsRemoveAt(idx);
     }
-    
-    public ICommand Test => Command.Create(T);
-    private void T(object? sender, EventArgs e) {
-        foreach (var t in Groups) 
-            Console.WriteLine(t);
-        Console.WriteLine("");
-        
-        foreach (var t in Teachers) 
-            Console.WriteLine(t);
-        Console.WriteLine("");
-        
-        foreach (var t in Classrooms) 
-            Console.WriteLine(t);
-        Console.WriteLine("");
-        
-        foreach (var t in Subjects) 
-            Console.WriteLine(t);
-        Console.WriteLine("");
-    }
+
+    #endregion
     
     private string _lessonDuration = string.Empty;
     public string LessonDuration {
