@@ -7,6 +7,7 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:lib="clr-namespace:CS_course_project.Lib"
       xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:settingsPage="clr-namespace:CS_course_project.UserControls.SettingsPage"
       mc:Ignorable="d"
       Title="Settings" Height="450" Width="800">
     <Page.DataContext>
@@ -105,32 +106,29 @@
         
         <Border Grid.Column="0">
             <StackPanel>
+                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
+                <settingsPage:EditableList Items="{Binding Groups}" RemoveCommand="{Binding RemoveGroupCommand}" />
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="1">
+            <StackPanel>
                 <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
-                <ListBox ItemsSource="{Binding Teachers}" HorizontalContentAlignment="Stretch">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <TextBlock 
-                                    DockPanel.Dock="Left"
-                                    Text="{Binding}"
-                                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                    Margin="5 0"
-                                    HorizontalAlignment="Left" />
-                                <Button Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"
-                                        CommandParameter="{Binding}"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        HorizontalAlignment="Right"
-                                        DockPanel.Dock="Right"
-                                        Foreground="Black">
-                                    <materialDesign:PackIcon Kind="CloseThick" />
-                                </Button>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <settingsPage:EditableList Items="{Binding Teachers}" RemoveCommand="{Binding RemoveTeacherCommand}" />
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="2">
+            <StackPanel>
+                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
+                <settingsPage:EditableList Items="{Binding Classrooms}" RemoveCommand="{Binding RemoveClassroomCommand}" />
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="3">
+            <StackPanel>
+                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
+                <settingsPage:EditableList Items="{Binding Subjects}" RemoveCommand="{Binding RemoveSubjectCommand}" />
             </StackPanel>
         </Border>
         </Grid>
+        <Button Command="{Binding Test}">Test</Button>
     </StackPanel>
 </Page>

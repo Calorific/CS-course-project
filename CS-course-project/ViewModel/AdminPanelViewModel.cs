@@ -16,9 +16,9 @@ public class AdminPanelViewModel : NotifyErrorsViewModel {
         _teachers = await DataManager.LoadTeachers();
         _classrooms = await DataManager.LoadClassrooms();
         _subjects = await DataManager.LoadSubjects();
-        if (_groups?.Count == 0 || _teachers?.Count == 0 || _classrooms?.Count == 0 || _subjects?.Count == 0) {
+        // if (_groups?.Count == 0 || _teachers?.Count == 0 || _classrooms?.Count == 0 || _subjects?.Count == 0) {
             Navigator.Navigate.Execute("Settings", null);
-        }
+        // }
     }
     
     public AdminPanelViewModel() {

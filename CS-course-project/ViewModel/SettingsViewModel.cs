@@ -8,15 +8,6 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.ViewModel;
 
-public class Test {
-    public string Name { get; set; }
-
-    public Test(string name) {
-        Name = name;
-    } 
-    
-}
-
 public partial class SettingsViewModel : NotifyErrorsViewModel {
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
     private async void ChangeSettings(object? sender, EventArgs e) {
@@ -31,12 +22,51 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
 
-    public ICommand RemoveCommand => Command.Create(RemoveItem);
-
-    private void RemoveItem(object? sender, EventArgs e) {
+    public ICommand RemoveGroupCommand => Command.Create(RemoveGroup);
+    private void RemoveGroup(object? sender, EventArgs e) {
+        if (sender is string item) {
+            Groups.Remove(item);
+        }
+    }
+    
+    public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
+    private void RemoveTeacher(object? sender, EventArgs e) {
         if (sender is string item) {
             Teachers.Remove(item);
         }
+    }
+    
+    public ICommand RemoveClassroomCommand => Command.Create(RemoveClassroom);
+    private void RemoveClassroom(object? sender, EventArgs e) {
+        if (sender is string item) {
+            Classrooms.Remove(item);
+        }
+    }
+    
+    public ICommand RemoveSubjectCommand => Command.Create(RemoveSubject);
+    private void RemoveSubject(object? sender, EventArgs e) {
+        if (sender is string item) {
+            Subjects.Remove(item);
+        }
+    }
+    
+    public ICommand Test => Command.Create(T);
+    private void T(object? sender, EventArgs e) {
+        foreach (var t in Groups) 
+            Console.WriteLine(t);
+        Console.WriteLine("");
+        
+        foreach (var t in Teachers) 
+            Console.WriteLine(t);
+        Console.WriteLine("");
+        
+        foreach (var t in Classrooms) 
+            Console.WriteLine(t);
+        Console.WriteLine("");
+        
+        foreach (var t in Subjects) 
+            Console.WriteLine(t);
+        Console.WriteLine("");
     }
     
     private string _lessonDuration = string.Empty;
@@ -96,16 +126,46 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
 
+    private ObservableCollection<string> _groups;
+    public ObservableCollection<string> Groups {
+        get => _groups; 
+        set {
+            if (_groups == value) return;
+            _groups = value;
+            Notify();
+        }
+    }
+    
     private ObservableCollection<string> _teachers;
     public ObservableCollection<string> Teachers {
         get => _teachers; 
-        private set {
+        set {
             if (_teachers == value) return;
             _teachers = value;
             Notify();
         }
     }
-
+    
+    private ObservableCollection<string> _classrooms;
+    public ObservableCollection<string> Classrooms {
+        get => _classrooms; 
+        set {
+            if (_classrooms == value) return;
+            _classrooms = value;
+            Notify();
+        }
+    }
+    
+    private ObservableCollection<string> _subjects;
+    public ObservableCollection<string> Subjects {
+        get => _subjects; 
+        set {
+            if (_subjects == value) return;
+            _subjects = value;
+            Notify();
+        }
+    }
+    
     private static int ParseTime(string time) {
         var parts = time.Split(':');
         var res = 0;
@@ -124,17 +184,29 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
     
     private async void Init() {
         var settings = await DataManager.LoadSettings();
-        var teachers = await DataManager.LoadTeachers();
         LessonDuration = settings.LessonDuration.ToString();
         BreakDuration = settings.BreakDuration.ToString();
         LongBreakDuration = settings.LongBreakDuration.ToString();
         StartTime = FormatTime(settings.StartTime);
+        
+        var groups = await DataManager.LoadGroups();
+        Groups = new ObservableCollection<string>(groups);
+        
+        var teachers = await DataManager.LoadTeachers();
         Teachers = new ObservableCollection<string>(teachers);
-        // Teachers = teachers;
-    }
 
+        var classrooms = await DataManager.LoadClassrooms();
+        Classrooms = new ObservableCollection<string>(classrooms);
+        
+        var subjects = await DataManager.LoadSubjects();
+        Subjects = new ObservableCollection<string>(subjects);
+    }
+    
     public SettingsViewModel() {
+        _groups = new ObservableCollection<string>();
         _teachers = new ObservableCollection<string>();
+        _classrooms = new ObservableCollection<string>();
+        _subjects = new ObservableCollection<string>();
         Init();
     }
 }
