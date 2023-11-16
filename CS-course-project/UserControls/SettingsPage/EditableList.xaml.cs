@@ -34,16 +34,14 @@ public partial class EditableList {
     }
     
     private void OnLoad(object sender, RoutedEventArgs e) {
-        if (Form.DataContext is EditableListViewModel viewModel) {
-            viewModel.BaseCommand = AddCommand;
-            viewModel.Items = Items;
-        }
+        if (Form.DataContext is not EditableListViewModel viewModel) return;
+        viewModel.BaseCommand = AddCommand;
+        viewModel.Items = Items;
     }
     
     public EditableList() {
         InitializeComponent();
         ItemListBox.DataContext = this;
-        Form.DataContext = new EditableListViewModel(Items, AddCommand);
         Loaded += OnLoad;
     }
 }

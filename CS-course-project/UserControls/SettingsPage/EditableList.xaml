@@ -6,6 +6,9 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:lib="clr-namespace:CS_course_project.Lib"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:userControls="clr-namespace:CS_course_project.ViewModel.UserControls"
+             xmlns:settingsPage="clr-namespace:CS_course_project.UserControls.SettingsPage"
+             d:DataContext="{d:DesignInstance settingsPage:EditableList, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -13,6 +16,9 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" x:Name="Form" Margin="0 7">
+            <StackPanel.DataContext>
+                <userControls:EditableListViewModel />
+            </StackPanel.DataContext>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.85*"></ColumnDefinition>

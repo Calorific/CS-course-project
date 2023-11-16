@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
 
@@ -8,12 +7,13 @@ namespace CS_course_project.ViewModel.UserControls;
 
 public class EditableListViewModel : NotifyErrorsViewModel {
     
-    public ObservableCollection<string> Items;
+    public ObservableCollection<string>? Items;
 
     public ICommand? BaseCommand { get; set; }
     
     public ICommand AddItemCommand => Command.Create(AddItem);
     private void AddItem(object? sender, EventArgs e) {
+        if (Items == null) return;
         if (NewItem.Length == 0) {
             AddError(nameof(NewItem), "Нужно указать значение");
             return;
@@ -38,6 +38,8 @@ public class EditableListViewModel : NotifyErrorsViewModel {
         }
     }
 
+    public EditableListViewModel() {}
+    
     public EditableListViewModel(ObservableCollection<string> items, ICommand addCommand) {
         Items = items;
         BaseCommand = addCommand;
