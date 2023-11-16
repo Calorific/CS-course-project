@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="CS_course_project.UserControls.SettingsPage.SettingsForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:lib="clr-namespace:CS_course_project.Lib"
+             xmlns:userControls="clr-namespace:CS_course_project.ViewModel.UserControls"
+             mc:Ignorable="d">
+    <UserControl.DataContext>
+        <userControls:SettingsFormViewModel />
+    </UserControl.DataContext>
+    <Grid Margin="50 10">
+        <Grid.Resources>
+            <Style TargetType="Border">
+                <Setter Property="Padding" Value="5,5,5,5" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0">
+            <TextBox
+                VerticalAlignment="Top"
+                materialDesign:HintAssist.Hint="Длина урока"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                <TextBox.Text>
+                    <Binding Path="LessonDuration" UpdateSourceTrigger="PropertyChanged" />
+                </TextBox.Text>
+                <b:Interaction.Behaviors>
+                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="3" />
+                </b:Interaction.Behaviors>
+            </TextBox>
+        </Border>
+        <Border Grid.Column="1">
+            <TextBox
+                VerticalAlignment="Top"
+                materialDesign:HintAssist.Hint="Длина перемены"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                <TextBox.Text>
+                    <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                </TextBox.Text>
+                <b:Interaction.Behaviors>
+                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                </b:Interaction.Behaviors>
+            </TextBox>
+        </Border>
+        <Border Grid.Column="2">
+            <TextBox
+                VerticalAlignment="Top"
+                materialDesign:HintAssist.Hint="Длина обеда"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                <TextBox.Text>
+                    <Binding Path="LongBreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                </TextBox.Text>
+                <b:Interaction.Behaviors>
+                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                </b:Interaction.Behaviors>
+            </TextBox>
+        </Border>
+        <Border Grid.Column="3">
+            <TextBox
+                VerticalAlignment="Top"
+                materialDesign:HintAssist.Hint="Начало дня (8:00)"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                <TextBox.Text>
+                    <Binding Path="StartTime" UpdateSourceTrigger="PropertyChanged" />
+                </TextBox.Text>
+                <b:Interaction.Behaviors>
+                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d\d?:?\d?\d?$" MaxLength="5" />
+                </b:Interaction.Behaviors>
+            </TextBox>
+        </Border>
+        <Border Grid.Column="4">
+            <Button
+                Margin="0 9"
+                VerticalAlignment="Top"
+                Content="Сохранить"
+                IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                Command="{Binding SubmitCommand}" />
+        </Border>
+    </Grid>
+</UserControl>
