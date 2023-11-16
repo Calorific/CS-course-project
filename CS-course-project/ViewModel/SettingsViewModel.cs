@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,28 +29,28 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
     public ICommand AddGroupCommand => Command.Create(AddGroup);
     private async void AddGroup(object? sender, EventArgs e) {
         if (sender is not string item) return;
-        Groups.Add(item);
+        InsertSort(Groups, item);
         await DataManager.UpdateGroups(item);
     }
     
     public ICommand AddTeacherCommand => Command.Create(AddTeacher);
     private async void AddTeacher(object? sender, EventArgs e) {
         if (sender is not string item) return;
-        Teachers.Add(item);
+        InsertSort(Teachers, item);
         await DataManager.UpdateTeachers(item);
     }
     
     public ICommand AddClassroomCommand => Command.Create(AddClassroom);
     private async void AddClassroom(object? sender, EventArgs e) {
         if (sender is not string item) return;
-        Classrooms.Add(item);
+        InsertSort(Classrooms, item);
         await DataManager.UpdateClassrooms(item);
     }
     
     public ICommand AddSubjectCommand => Command.Create(AddSubject);
     private async void AddSubject(object? sender, EventArgs e) {
         if (sender is not string item) return;
-        Subjects.Add(item);
+        InsertSort(Subjects, item);
         await DataManager.UpdateSubjects(item);
     }
     
@@ -204,6 +205,15 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         var minutes = time % 60;
         return (time / 60).ToString() + ':' + (minutes < 10 ? "0" : "") + minutes;
     }
+
+    private static void InsertSort(IList<string> collection, string newItem) {
+        for (var i = 0; i < collection.Count; i++) {
+            if (string.Compare(collection[i], newItem, StringComparison.OrdinalIgnoreCase) <= 0) continue;
+            collection.Insert(i, newItem);
+            return;
+        }
+        collection.Add(newItem);
+    }
     
     private async void Init() {
         var settings = await DataManager.LoadSettings();
@@ -212,16 +222,16 @@ public partial class SettingsViewModel : NotifyErrorsViewModel {
         LongBreakDuration = settings.LongBreakDuration.ToString();
         StartTime = FormatTime(settings.StartTime);
         
-        var groups = await DataManager.LoadGroups();
+        var groups = (await DataManager.LoadGroups()).OrderBy(s => s.ToLower());
         Groups = new ObservableCollection<string>(groups);
         
-        var teachers = await DataManager.LoadTeachers();
+        var teachers = (await DataManager.LoadTeachers()).OrderBy(s => s.ToLower());
         Teachers = new ObservableCollection<string>(teachers);
 
-        var classrooms = await DataManager.LoadClassrooms();
+        var classrooms = (await DataManager.LoadClassrooms()).OrderBy(s => s.ToLower());
         Classrooms = new ObservableCollection<string>(classrooms);
         
-        var subjects = await DataManager.LoadSubjects();
+        var subjects = (await DataManager.LoadSubjects()).OrderBy(s => s.ToLower());
         Subjects = new ObservableCollection<string>(subjects);
     }
     
