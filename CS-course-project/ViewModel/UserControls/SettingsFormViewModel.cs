@@ -8,16 +8,41 @@ using CS_course_project.Model.Timetables;
 namespace CS_course_project.ViewModel.UserControls; 
 
 public partial class SettingsFormViewModel : NotifyErrorsViewModel {
+    private Settings? _settings;
+    
+    public ICommand UpdatePasswordCommand => Command.Create(UpdatePassword);
+    private async void UpdatePassword(object? sender, EventArgs e) {
+        if (_newPassword.Length == 0) {
+            AddError(nameof(NewPassword), "Необходимо указать значение");
+            return;
+        }
+        ClearErrors(nameof(NewPassword));
+        var newPassword = BCrypt.Net.BCrypt.HashPassword(_newPassword);
+        var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), newPassword);
+        await DataManager.UpdateSettings(settings);
+        NewPassword = string.Empty;
+    }
+    
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
     private async void ChangeSettings(object? sender, EventArgs e) {
-        if (HasErrors) return;
+        if (HasErrors || _settings == null) return;
         try {
-            var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime));
+            var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), _settings.HashedAdminPassword);
             await DataManager.UpdateSettings(settings);
         }
         catch (Exception error) {
             Console.WriteLine(error.Message);
             AddError(nameof(StartTime), "Некорректное значение");
+        }
+    }
+    
+    private string _newPassword = string.Empty;
+    public string NewPassword {
+        get => _newPassword;
+        set {
+            _newPassword = value;
+            ClearErrors(nameof(NewPassword));
+            Notify();
         }
     }
     
@@ -96,6 +121,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     
     private async void Init() {
         var settings = await DataManager.LoadSettings();
+        _settings = settings;
         LessonDuration = settings.LessonDuration.ToString();
         BreakDuration = settings.BreakDuration.ToString();
         LongBreakDuration = settings.LongBreakDuration.ToString();

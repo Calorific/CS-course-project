@@ -14,9 +14,9 @@ public class LoginViewModel : NotifyErrorsViewModel {
     private bool _firstRender = true;
     
     public ICommand SubmitCommand => Command.Create(LogIn);
-    private void LogIn(object? sender, EventArgs e) {
+    private async void LogIn(object? sender, EventArgs e) {
         var data = IsAdmin ? Password : Group;
-        var error = AuthService.LogIn(data, IsAdmin);
+        var error = await AuthService.LogIn(data, IsAdmin);
         
         if (error == "WRONG_PASSWORD" && IsAdmin)
             AddError(nameof(Password), "Неверный пароль");

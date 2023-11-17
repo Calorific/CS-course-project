@@ -16,13 +16,10 @@ public partial class EditableList {
     
     public static readonly DependencyProperty AddCommandProperty =
         DependencyProperty.Register(nameof(AddCommand), typeof(ICommand), typeof(EditableList));
-
+    
     public ICommand AddCommand {
         get => (ICommand)GetValue(AddCommandProperty);
-        set {
-            SetValue(AddCommandProperty, value);
-            Form.DataContext = new EditableListViewModel(Items, value);
-        }
+        set => SetValue(AddCommandProperty, value);
     }
     
     public static readonly DependencyProperty RemoveCommandProperty =

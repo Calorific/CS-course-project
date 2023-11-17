@@ -11,80 +11,93 @@
     <UserControl.DataContext>
         <userControls:SettingsFormViewModel />
     </UserControl.DataContext>
-    <Grid Margin="50 10">
-        <Grid.Resources>
-            <Style TargetType="Border">
-                <Setter Property="Padding" Value="5,5,5,5" />
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина урока"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="LessonDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="3" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="1">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина перемены"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="2">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Длина обеда"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="LongBreakDuration" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="3">
-            <TextBox
-                VerticalAlignment="Top"
-                materialDesign:HintAssist.Hint="Начало дня (8:00)"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}">
-                <TextBox.Text>
-                    <Binding Path="StartTime" UpdateSourceTrigger="PropertyChanged" />
-                </TextBox.Text>
-                <b:Interaction.Behaviors>
-                    <lib:TextBoxInputRegExBehaviour RegularExpression="^\d\d?:?\d?\d?$" MaxLength="5" />
-                </b:Interaction.Behaviors>
-            </TextBox>
-        </Border>
-        <Border Grid.Column="4">
-            <Button
-                Margin="0 9"
-                VerticalAlignment="Top"
-                Content="Сохранить"
-                IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                Command="{Binding SubmitCommand}" />
-        </Border>
-    </Grid>
+    <StackPanel Margin="50 10">
+        <StackPanel Orientation="Horizontal" Margin="5 0 0 20">
+            <PasswordBox
+                materialDesign:HintAssist.Hint="Новый пароль"
+                materialDesign:PasswordBoxAssist.Password="{Binding Path=NewPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                Width="250px"
+                Margin="0 0 5 0" />
+            <Button Width="100px" Content="Сохранить" Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                    Command="{Binding UpdatePasswordCommand}" />
+        </StackPanel>
+        <Grid>
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Padding" Value="5,5,5,5" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+        
+                <Border Grid.Column="0">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина урока"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="LessonDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="3" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="1">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина перемены"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="BreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="2">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Длина обеда"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="LongBreakDuration" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="2" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="3">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        materialDesign:HintAssist.Hint="Начало дня (8:00)"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="StartTime" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="^\d\d?:?\d?\d?$" MaxLength="5" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
+                </Border>
+                <Border Grid.Column="4">
+                    <Button
+                        Margin="0 9"
+                        VerticalAlignment="Top"
+                        Content="Сохранить"
+                        IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        Command="{Binding SubmitCommand}" />
+                </Border>
+            </Grid>
+    </StackPanel>
+    
 </UserControl>
