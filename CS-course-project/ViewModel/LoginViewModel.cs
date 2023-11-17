@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.Model.Services;
+using CS_course_project.model.Storage;
 using CS_course_project.Navigation;
 
 namespace CS_course_project.ViewModel; 
@@ -15,7 +16,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
     
     public ICommand SubmitCommand => Command.Create(LogIn);
     private async void LogIn(object? sender, EventArgs e) {
-        var data = IsAdmin ? Password : Group;
+        var data = IsAdmin ? BCrypt.Net.BCrypt.HashPassword(Password) : Group;
         var error = await AuthService.LogIn(data, IsAdmin);
         
         if (error == "WRONG_PASSWORD" && IsAdmin)
@@ -88,5 +89,19 @@ public class LoginViewModel : NotifyErrorsViewModel {
     private new void AddError(string propertyName, string error) {
         base.AddError(propertyName, error);
         CanSubmit = false;
+    }
+
+    private static async void CheckSession() {
+        var session = await DataManager.LoadSession();
+        if (session.Data == null) return;
+        
+        var error = await AuthService.LogIn(session.Data, session.IsAdmin);
+        
+        if (error != null) await DataManager.RemoveSession();
+        else Navigator.Navigate.Execute("AdminPanel", null);
+    }
+    
+    public LoginViewModel() {
+        CheckSession();
     }
 }

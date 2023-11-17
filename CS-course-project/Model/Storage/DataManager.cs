@@ -17,8 +17,18 @@ public static class DataManager {
     private static TimetableRepository TimetableRepository { get; } = new();
     private static SettingsRepository SettingsRepository { get; } = new();
 
+    private static SessionRepository SessionRepository { get; } = new();
+
     #endregion
-    
+
+
+    #region Session
+
+    public static async Task<Session> LoadSession() => await SessionRepository.GetData();
+    public static async Task<bool> UpdateSession(Session newItem) => await SessionRepository.Update(newItem);
+    public static async Task<bool> RemoveSession() => await SessionRepository.RemoveAt(true);
+
+    #endregion
 
 
     #region Groups

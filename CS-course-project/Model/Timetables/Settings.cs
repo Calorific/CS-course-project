@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace CS_course_project.Model.Timetables; 
 
 public class Settings {
-    public string HashedAdminPassword { get; private init; } = "$2a$11$XDhDPO0UI6Uf7q2eE1lexOGNz.nEqF5HnjNeguYq7i1c.OO3zdnsG";
+    public string AdminPassword { get; private init; } = "123";
 
     private readonly int _lessonDuration = 40;
     public int LessonDuration {
@@ -46,8 +46,8 @@ public class Settings {
     public Settings() {}
 
     [JsonConstructor]
-    public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime, string hashedAdminPassword) {
-        HashedAdminPassword = hashedAdminPassword;
+    public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime, string adminPassword) {
+        AdminPassword = adminPassword;
         LessonDuration = lessonDuration;
         BreakDuration = breakDuration;
         LongBreakDuration = longBreakDuration;

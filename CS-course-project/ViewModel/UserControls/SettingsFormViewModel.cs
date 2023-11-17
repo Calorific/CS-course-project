@@ -17,9 +17,9 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
             return;
         }
         ClearErrors(nameof(NewPassword));
-        var newPassword = BCrypt.Net.BCrypt.HashPassword(_newPassword);
-        var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), newPassword);
+        var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), _newPassword);
         await DataManager.UpdateSettings(settings);
+        await DataManager.UpdateSession(new Session(true, BCrypt.Net.BCrypt.HashPassword(NewPassword)));
         NewPassword = string.Empty;
     }
     
@@ -27,7 +27,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     private async void ChangeSettings(object? sender, EventArgs e) {
         if (HasErrors || _settings == null) return;
         try {
-            var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), _settings.HashedAdminPassword);
+            var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration), ParseTime(StartTime), _settings.AdminPassword);
             await DataManager.UpdateSettings(settings);
         }
         catch (Exception error) {

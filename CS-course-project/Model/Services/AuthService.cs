@@ -11,8 +11,12 @@ public static class AuthService {
             return null;
         }
 
-        var adminPasswordHash = (await DataManager.LoadSettings()).HashedAdminPassword;
-        return BCrypt.Net.BCrypt.Verify(data, adminPasswordHash) ? null : "WRONG_PASSWORD";
+        var adminPassword = (await DataManager.LoadSettings()).AdminPassword;
+        var isValid = BCrypt.Net.BCrypt.Verify(adminPassword, data);
+        
+        if (!isValid) return "WRONG_PASSWORD";
+        await DataManager.UpdateSession(new Session(true, data));
+        return null;
     }
 }
 
