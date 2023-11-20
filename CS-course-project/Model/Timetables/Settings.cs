@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CS_course_project.Model.Timetables; 
@@ -42,15 +43,29 @@ public class Settings {
             _startTime = value;
         }
     }
+    
+    private readonly int _lessonsNumber = 14;
+    public int LessonsNumber {
+        get => _lessonsNumber;
+        private init {
+            if (value is < 0 or > 100) 
+                throw new Exception("Некорректное значение");
+            _lessonsNumber = value;
+        }
+    }
+
+    public List<int> LongBreakLessons { get; } = new();
 
     public Settings() {}
 
     [JsonConstructor]
-    public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime, string adminPassword) {
+    public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime, string adminPassword, int lessonsNumber, List<int> longBreakLessons) {
         AdminPassword = adminPassword;
         LessonDuration = lessonDuration;
         BreakDuration = breakDuration;
         LongBreakDuration = longBreakDuration;
         StartTime = startTime;
+        LessonsNumber = lessonsNumber;
+        LongBreakLessons = longBreakLessons;
     }
 }

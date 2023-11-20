@@ -12,15 +12,20 @@
         <userControls:SettingsFormViewModel />
     </UserControl.DataContext>
     <StackPanel Margin="50 10">
-        <StackPanel Orientation="Horizontal" Margin="5 0 0 20">
+        <StackPanel Orientation="Horizontal" Margin="5 3 0 20">
             <PasswordBox
                 materialDesign:HintAssist.Hint="Новый пароль"
                 materialDesign:PasswordBoxAssist.Password="{Binding Path=NewPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                 Width="250px"
                 Margin="0 0 5 0" />
-            <Button Width="100px" Content="Сохранить" Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                    Command="{Binding UpdatePasswordCommand}" />
+            <Button
+                Margin="0 9"
+                VerticalAlignment="Top"
+                Content="Обновить"
+                IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                Command="{Binding UpdatePasswordCommand}" />
         </StackPanel>
         <Grid>
                 <Grid.Resources>
@@ -89,15 +94,49 @@
                     </TextBox>
                 </Border>
                 <Border Grid.Column="4">
-                    <Button
-                        Margin="0 9"
+                    <TextBox
                         VerticalAlignment="Top"
-                        Content="Сохранить"
-                        IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                        Command="{Binding SubmitCommand}" />
+                        materialDesign:HintAssist.Hint="Кол-во уроков"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="LessonsNumber" UpdateSourceTrigger="PropertyChanged" />
+                        </TextBox.Text>
+                        <b:Interaction.Behaviors>
+                            <lib:TextBoxInputRegExBehaviour RegularExpression="\d\d?" MaxLength="2" />
+                        </b:Interaction.Behaviors>
+                    </TextBox>
                 </Border>
             </Grid>
+        <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
+            <StackPanel>
+                <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Text="Большая перемена после уроков:" />
+                <ListBox SelectionMode="Multiple"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         ItemsSource="{Binding LessonsArray}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Height="30" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                                <TextBlock Text="{Binding Data}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+                <Button
+                    Margin="5 20 0 0"
+                    Content="Сохранить"
+                    IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                    Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                    Command="{Binding SubmitCommand}"/>
+        </StackPanel>
     </StackPanel>
     
 </UserControl>
