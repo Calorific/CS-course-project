@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.model.Storage;
+using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.ViewModel;
 
@@ -21,9 +22,10 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     public ICommand AddTeacherCommand => Command.Create(AddTeacher);
     private async void AddTeacher(object? sender, EventArgs e) {
-        if (sender is not string item) return;
-        InsertSort(Teachers, item);
-        await DataManager.UpdateTeachers(item);
+        if (sender is not string name) return;
+        var newTeacher = new Teacher(name);
+        InsertTeacher(Teachers, newTeacher);
+        await DataManager.UpdateTeachers(newTeacher);
     }
     
     public ICommand AddClassroomCommand => Command.Create(AddClassroom);
@@ -55,10 +57,13 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
     private async void RemoveTeacher(object? sender, EventArgs e) {
-        if (sender is not string item) return;
-        var idx = Teachers.IndexOf(item);
-        Teachers.Remove(item);
-        await DataManager.TeachersRemoveAt(idx);
+        if (sender is not string name) return;
+        for (var i = 0; i < _teachers.Count; i++) {
+            if (_teachers[i].Name != name) continue;
+            Teachers.Remove(_teachers[i]);
+            await DataManager.TeachersRemoveAt(i);
+            break;
+        }
     }
     
     public ICommand RemoveClassroomCommand => Command.Create(RemoveClassroom);
@@ -92,13 +97,14 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private ObservableCollection<string> _teachers;
-    public ObservableCollection<string> Teachers {
+    private ObservableCollection<Teacher> _teachers;
+    public ObservableCollection<string> TeachersNames => new(Teachers.Select(t => t.Name));
+    private ObservableCollection<Teacher> Teachers {
         get => _teachers; 
         set {
             if (_teachers == value) return;
             _teachers = value;
-            Notify();
+            NotifyAll(nameof(Teachers), nameof(TeachersNames));
         }
     }
     
@@ -134,12 +140,22 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         collection.Add(newItem);
     }
     
+    private static void InsertTeacher(IList<Teacher> collection, Teacher newItem) {
+        for (var i = 0; i < collection.Count; i++) {
+            if (string.Compare(collection[i].Name, newItem.Name, StringComparison.OrdinalIgnoreCase) <= 0) continue;
+            collection.Insert(i, newItem);
+            return;
+        }
+        collection.Add(newItem);
+    }
+    
     private async void Init() {
         var groups = (await DataManager.LoadGroups()).OrderBy(s => s.ToLower());
         Groups = new ObservableCollection<string>(groups);
         
-        var teachers = (await DataManager.LoadTeachers()).OrderBy(s => s.ToLower());
-        Teachers = new ObservableCollection<string>(teachers);
+        var teachers = (await DataManager.LoadTeachers()).OrderBy(s => s.Name.ToLower());
+        Teachers = new ObservableCollection<Teacher>(teachers);
+        Teachers.CollectionChanged += (_, _) => Notify(nameof(TeachersNames));
 
         var classrooms = (await DataManager.LoadClassrooms()).OrderBy(s => s.ToLower());
         Classrooms = new ObservableCollection<string>(classrooms);
@@ -150,9 +166,10 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     public SettingsViewModel() {
         _groups = new ObservableCollection<string>();
-        _teachers = new ObservableCollection<string>();
         _classrooms = new ObservableCollection<string>();
         _subjects = new ObservableCollection<string>();
+        _teachers = new ObservableCollection<Teacher>();
+        
         Init();
     }
 }

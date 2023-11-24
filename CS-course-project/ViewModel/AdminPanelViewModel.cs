@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using CS_course_project.model.Storage;
+using CS_course_project.Model.Timetables;
 using CS_course_project.Navigation;
 
 namespace CS_course_project.ViewModel; 
 
 public class AdminPanelViewModel : NotifyErrorsViewModel {
     private List<string>? _groups;
-    private List<string>? _teachers;
+    private List<Teacher>? _teachers;
     private List<string>? _classrooms;
     private List<string>? _subjects;
 

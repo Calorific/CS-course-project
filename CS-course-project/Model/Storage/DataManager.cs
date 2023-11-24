@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CS_course_project.Model.Timetables;
 
@@ -10,11 +9,13 @@ public static class DataManager {
     #region Repositories
 
     private static BaseRepository GroupRepository { get; } = new(RepositoryItems.Groups);
-    private static BaseRepository TeachersRepository { get; } = new(RepositoryItems.Teachers);
     private static BaseRepository ClassroomsRepository { get; } = new(RepositoryItems.Classrooms);
     private static BaseRepository SubjectsRepository { get; } = new(RepositoryItems.Subjects);
     
+    private static TeacherRepository TeachersRepository { get; } = new();
+    
     private static TimetableRepository TimetableRepository { get; } = new();
+    
     private static SettingsRepository SettingsRepository { get; } = new();
 
     private static SessionRepository SessionRepository { get; } = new();
@@ -42,8 +43,8 @@ public static class DataManager {
     
     #region Teachers
     
-    public static async Task<List<string>> LoadTeachers() => await TeachersRepository.GetData();
-    public static async Task<bool> UpdateTeachers(string newItem) => await TeachersRepository.Update(newItem);
+    public static async Task<List<Teacher>> LoadTeachers() => await TeachersRepository.GetData();
+    public static async Task<bool> UpdateTeachers(Teacher newItem) => await TeachersRepository.Update(newItem);
     public static async Task<bool> TeachersRemoveAt(int idx) => await TeachersRepository.RemoveAt(idx);
 
     #endregion

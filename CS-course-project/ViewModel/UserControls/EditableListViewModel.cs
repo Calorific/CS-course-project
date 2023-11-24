@@ -11,6 +11,8 @@ public class EditableListViewModel : NotifyErrorsViewModel {
 
     public ICommand? BaseCommand { get; set; }
     
+    public bool IsUnique { get; set; }
+    
     public ICommand AddItemCommand => Command.Create(AddItem);
     private void AddItem(object? sender, EventArgs e) {
         if (Items == null) return;
@@ -18,7 +20,7 @@ public class EditableListViewModel : NotifyErrorsViewModel {
             AddError(nameof(NewItem), "Нужно указать значение");
             return;
         }
-        if (Items.IndexOf(NewItem) != -1) {
+        if (IsUnique && Items.IndexOf(NewItem) != -1) {
             AddError(nameof(NewItem), "Значение уже существует");
             return;
         }
@@ -36,12 +38,5 @@ public class EditableListViewModel : NotifyErrorsViewModel {
             ClearErrors(nameof(NewItem));
             Notify();
         }
-    }
-
-    public EditableListViewModel() {}
-    
-    public EditableListViewModel(ObservableCollection<string> items, ICommand addCommand) {
-        Items = items;
-        BaseCommand = addCommand;
     }
 }

@@ -41,9 +41,10 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
                         <settingsPage:EditableList
-                            Items="{Binding Teachers}"
+                            Items="{Binding TeachersNames}"
                             RemoveCommand="{Binding RemoveTeacherCommand}"
-                            AddCommand="{Binding AddTeacherCommand}" />
+                            AddCommand="{Binding AddTeacherCommand}"
+                            IsUnique="False" />
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2">

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CS_course_project.model.Storage; 
 
-public enum RepositoryItems { Groups, Teachers, Classrooms, Subjects }; 
+public enum RepositoryItems { Groups, Classrooms, Subjects }; 
 
 public class BaseRepository : IRepository<string, List<string>, int> {
     private readonly string _path = "./data/";
@@ -64,7 +64,6 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         _path += type switch {
             RepositoryItems.Groups => "groups.json",
             RepositoryItems.Classrooms => "classrooms.json",
-            RepositoryItems.Teachers => "teachers.json",
             RepositoryItems.Subjects => "subjects.json",
             _ => "error.json"
         };

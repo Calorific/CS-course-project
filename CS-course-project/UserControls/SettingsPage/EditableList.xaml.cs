@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.ViewModel.UserControls;
@@ -12,6 +13,14 @@ public partial class EditableList {
     public ObservableCollection<string> Items {
         get => (ObservableCollection<string>)GetValue(ItemsProperty);
         set => SetValue(ItemsProperty, value);
+    }
+    
+    public static readonly DependencyProperty IsUniqueProperty =
+        DependencyProperty.Register(nameof(IsUnique), typeof(bool), typeof(EditableList), new UIPropertyMetadata(true));
+
+    public bool IsUnique {
+        get => (bool)GetValue(IsUniqueProperty);
+        set => SetValue(IsUniqueProperty, value);
     }
     
     public static readonly DependencyProperty AddCommandProperty =
@@ -34,6 +43,7 @@ public partial class EditableList {
         if (Form.DataContext is not EditableListViewModel viewModel) return;
         viewModel.BaseCommand = AddCommand;
         viewModel.Items = Items;
+        viewModel.IsUnique = IsUnique;
     }
     
     public EditableList() {
