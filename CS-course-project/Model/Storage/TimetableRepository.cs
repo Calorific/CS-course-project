@@ -11,6 +11,7 @@ namespace CS_course_project.model.Storage;
 
 public class TimetableRepository : IRepository<ITimetable, Dictionary<string, ITimetable>, string> {
     private const string Path = "./data/timetables.json";
+    private Dictionary<string, ITimetable>? _data;
     
     private static void SaveItems(Dictionary<string, ITimetable> timetables) {
         var json = JsonSerializer.Serialize(timetables);
@@ -34,22 +35,21 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
 
     public async Task<Dictionary<string, ITimetable>> GetData() {
         return await Task.Run(() => {
+            if (_data != null) return _data;
             var json = File.ReadAllText(Path);
             if (json.Length == 0)
                 return new Dictionary<string, ITimetable>();
-            var data = JsonSerializer.Deserialize<Dictionary<string, Timetable>>(json);
-            return data == null ? new Dictionary<string, ITimetable>() : data.Keys.ToDictionary<string?, string, ITimetable>(key => key, key => data[key]);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, Timetable>>(json);
+            var data = jsonData?.Keys.ToDictionary<string?, string, ITimetable>(key => key, key => jsonData[key]);
+            _data = data;
+            return data ?? new Dictionary<string, ITimetable>();
         });
     }
 
     public async Task<bool> RemoveAt(string key) {
-        return await Task.Run(() => {
+        return await Task.Run(async () => {
             try {
-                var json = File.ReadAllText(Path);
-                if (json.Length == 0)
-                    return false;
-                var data = JsonSerializer.Deserialize<Dictionary<string, ITimetable>>(json);
-                if (data == null) return false;
+                var data = await GetData();
                 data.Remove(key);
                 SaveItems(data);
                 return true;

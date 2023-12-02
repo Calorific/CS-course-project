@@ -10,17 +10,19 @@ public enum RepositoryItems { Groups, Classrooms, Subjects };
 
 public class BaseRepository : IRepository<string, List<string>, int> {
     private readonly string _path = "./data/";
+    private List<string>? _data;
 
-    private void SaveItems(List<string> groups) {
-        var json = JsonSerializer.Serialize(groups);
+    private void SaveItems(List<string> item) {
+        var json = JsonSerializer.Serialize(item);
         File.WriteAllText(_path, json);
     }
     
-    public async Task<bool> Update(string newGroup) {
+    public async Task<bool> Update(string newItem) {
         return await Task.Run(async () => {
             try {
                 var groups = await GetData();
-                groups.Add(newGroup);
+                groups.Add(newItem);
+                _data = groups;
                 SaveItems(groups);
                 return true;
             }
@@ -33,10 +35,12 @@ public class BaseRepository : IRepository<string, List<string>, int> {
 
     public async Task<List<string>> GetData() {
         return await Task.Run(() => {
+            if (_data != null) return _data;
             var json = File.ReadAllText(_path);
             if (json.Length == 0)
                 return new List<string>();
             var data = JsonSerializer.Deserialize<List<string>>(json);
+            _data = data;
             return data ?? new List<string>();
         });
     }
@@ -44,10 +48,11 @@ public class BaseRepository : IRepository<string, List<string>, int> {
     public async Task<bool> RemoveAt(int key) {
         return await Task.Run(async () => {
             try {
-                var groups = await GetData();
-                if (key < 0 || key >= groups.Count) return false;
-                groups.RemoveAt(key);
-                SaveItems(groups);
+                var data = await GetData();
+                if (key < 0 || key >= data.Count) return false;
+                data.RemoveAt(key);
+                _data = data;
+                SaveItems(data);
                 return true;
             }
             catch (Exception e) {
