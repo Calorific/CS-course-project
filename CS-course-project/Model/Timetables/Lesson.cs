@@ -2,10 +2,10 @@
 
 namespace CS_course_project.Model.Timetables; 
 
-public class Lesson {
-    public string Subject { get; } = string.Empty;
-    public string Classroom { get; } = string.Empty;
-    public string Teacher { get; } = string.Empty;
+public class Lesson : ILesson {
+    public string Subject { get; set; } = string.Empty;
+    public string Classroom { get; set; } = string.Empty;
+    public string Teacher { get; set; } = string.Empty;
 
     public Lesson() {}
     

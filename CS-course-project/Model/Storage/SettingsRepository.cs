@@ -6,10 +6,10 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Storage; 
 
-public class SettingsRepository : IRepository<Settings, Settings, bool> {
+public class SettingsRepository : IRepository<ISettings, ISettings, bool> {
     private const string Path = "./data/settings.json";
     
-    public async Task<bool> Update(Settings newItem) {
+    public async Task<bool> Update(ISettings newItem) {
         return await Task.Run(() => {
             try {
                 var json = JsonSerializer.Serialize(newItem);
@@ -23,7 +23,7 @@ public class SettingsRepository : IRepository<Settings, Settings, bool> {
         });
     }
 
-    public async Task<Settings> GetData() {
+    public async Task<ISettings> GetData() {
         return await Task.Run(() => { 
             var json = File.ReadAllText(Path);
             if (json.Length == 0)

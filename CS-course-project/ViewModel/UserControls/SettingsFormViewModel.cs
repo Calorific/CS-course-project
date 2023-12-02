@@ -35,7 +35,7 @@ public class ListItem : BaseViewModel {
 }
 
 public partial class SettingsFormViewModel : NotifyErrorsViewModel {
-    private Settings _settings = new();
+    private ISettings _settings;
     
     public ICommand UpdatePasswordCommand => Command.Create(UpdatePassword);
     private async void UpdatePassword(object? sender, EventArgs e) {
@@ -192,6 +192,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     }
 
     public SettingsFormViewModel() {
+        _settings = new Settings();
         Init();
     }
 }

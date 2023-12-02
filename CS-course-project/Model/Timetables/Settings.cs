@@ -4,8 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace CS_course_project.Model.Timetables; 
 
-public class Settings {
-    public string AdminPassword { get; private init; } = "123";
+public class Settings : ISettings {
+    public string AdminPassword { get; } = "123";
 
     private readonly int _lessonDuration = 40;
     public int LessonDuration {

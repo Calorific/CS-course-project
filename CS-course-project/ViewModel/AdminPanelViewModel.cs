@@ -7,7 +7,7 @@ namespace CS_course_project.ViewModel;
 
 public class AdminPanelViewModel : NotifyErrorsViewModel {
     private List<string>? _groups;
-    private List<Teacher>? _teachers;
+    private List<ITeacher>? _teachers;
     private List<string>? _classrooms;
     private List<string>? _subjects;
 

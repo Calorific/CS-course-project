@@ -43,7 +43,7 @@ public static class DataManager {
     
     #region Teachers
     
-    public static async Task<List<Teacher>> LoadTeachers() => await TeachersRepository.GetData();
+    public static async Task<List<ITeacher>> LoadTeachers() => await TeachersRepository.GetData();
     public static async Task<bool> UpdateTeachers(Teacher newItem) => await TeachersRepository.Update(newItem);
     public static async Task<bool> TeachersRemoveAt(int idx) => await TeachersRepository.RemoveAt(idx);
 
@@ -70,8 +70,8 @@ public static class DataManager {
 
     #region Settings
 
-    public static async Task<Settings> LoadSettings() => await SettingsRepository.GetData();
-    public static async Task UpdateSettings(Settings settings) => await SettingsRepository.Update(settings);
+    public static async Task<ISettings> LoadSettings() => await SettingsRepository.GetData();
+    public static async Task UpdateSettings(ISettings settings) => await SettingsRepository.Update(settings);
 
     #endregion
     

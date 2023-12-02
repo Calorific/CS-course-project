@@ -97,9 +97,9 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private ObservableCollection<Teacher> _teachers;
+    private ObservableCollection<ITeacher> _teachers;
     public ObservableCollection<string> TeachersNames => new(Teachers.Select(t => t.Name));
-    private ObservableCollection<Teacher> Teachers {
+    private ObservableCollection<ITeacher> Teachers {
         get => _teachers; 
         set {
             if (_teachers == value) return;
@@ -140,7 +140,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         collection.Add(newItem);
     }
     
-    private static void InsertTeacher(IList<Teacher> collection, Teacher newItem) {
+    private static void InsertTeacher(IList<ITeacher> collection, ITeacher newItem) {
         for (var i = 0; i < collection.Count; i++) {
             if (string.Compare(collection[i].Name, newItem.Name, StringComparison.OrdinalIgnoreCase) <= 0) continue;
             collection.Insert(i, newItem);
@@ -154,7 +154,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         Groups = new ObservableCollection<string>(groups);
         
         var teachers = (await DataManager.LoadTeachers()).OrderBy(s => s.Name.ToLower());
-        Teachers = new ObservableCollection<Teacher>(teachers);
+        Teachers = new ObservableCollection<ITeacher>(teachers);
         Teachers.CollectionChanged += (_, _) => Notify(nameof(TeachersNames));
 
         var classrooms = (await DataManager.LoadClassrooms()).OrderBy(s => s.ToLower());
@@ -168,7 +168,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         _groups = new ObservableCollection<string>();
         _classrooms = new ObservableCollection<string>();
         _subjects = new ObservableCollection<string>();
-        _teachers = new ObservableCollection<Teacher>();
+        _teachers = new ObservableCollection<ITeacher>();
         
         Init();
     }

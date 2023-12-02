@@ -5,15 +5,15 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Timetables; 
 
-public class Timetable {
-    public string Group { get; set; } = "";
+public class Timetable : ITimetable {
+    public string Group { get; } = "";
 
-    public List<Day> Days { get; } = Enumerable.Range(0, 7).Select(idx => new Day(idx, null)).ToList();
+    public IList<IDay> Days { get; } = Enumerable.Range(0, 7).Select(idx => new Day(idx, null) as IDay).ToList();
     
     public Timetable() {}
 
     [JsonConstructor]
-    public Timetable(string group, List<Day> days) {
+    public Timetable(string group, IList<IDay> days) {
         Group = group;
         Days = days;
     }
