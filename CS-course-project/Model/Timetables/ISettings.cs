@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CS_course_project.Model.Timetables; 
 
 public interface ISettings {
-    public string AdminPassword { get; }
+    public string HashedAdminPassword { get; }
 
     public int LessonDuration { get; }
     

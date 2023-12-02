@@ -16,7 +16,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
     
     public ICommand SubmitCommand => Command.Create(LogIn);
     private async void LogIn(object? sender, EventArgs e) {
-        var data = IsAdmin ? BCrypt.Net.BCrypt.HashPassword(Password) : Group;
+        var data = IsAdmin ? Password : Group;
         var error = await AuthService.LogIn(data, IsAdmin);
         
         if (error == "WRONG_PASSWORD" && IsAdmin)

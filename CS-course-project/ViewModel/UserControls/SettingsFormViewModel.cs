@@ -45,11 +45,11 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         }
         ClearErrors(nameof(NewPassword));
         var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
-            int.Parse(LongBreakDuration), ParseTime(StartTime), _newPassword,
+            int.Parse(LongBreakDuration), ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
             int.Parse(LessonsNumber), _settings.LongBreakLessons);
         _settings = settings;
         await DataManager.UpdateSettings(settings);
-        await DataManager.UpdateSession(new Session(true, BCrypt.Net.BCrypt.HashPassword(NewPassword)));
+        await DataManager.UpdateSession(new Session(true, NewPassword));
         NewPassword = string.Empty;
     }
     
@@ -61,7 +61,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         
         try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
-                ParseTime(StartTime), _settings.AdminPassword, int.Parse(LessonsNumber), longBreaks);
+                ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), longBreaks);
             await DataManager.UpdateSettings(settings);
         }
         catch (Exception error) {

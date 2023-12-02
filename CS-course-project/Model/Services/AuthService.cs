@@ -10,9 +10,9 @@ public static class AuthService {
             MessageBox.Show(data);
             return null;
         }
-
-        var adminPassword = (await DataManager.LoadSettings()).AdminPassword;
-        var isValid = BCrypt.Net.BCrypt.Verify(adminPassword, data);
+        
+        var hashedAdminPassword = (await DataManager.LoadSettings()).HashedAdminPassword;
+        var isValid = BCrypt.Net.BCrypt.Verify(data, hashedAdminPassword);
         
         if (!isValid) return "WRONG_PASSWORD";
         await DataManager.UpdateSession(new Session(true, data));
