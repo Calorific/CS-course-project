@@ -20,20 +20,44 @@
             
                 <TextBlock Grid.Column="0" Text="Расписание" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
                            DockPanel.Dock="Left" />
-                <Button
-                    Width="24" Height="24"
-                    Margin="0 0 50 0"
-                    Grid.Column="1"
-                    Command="{Binding SettingsRedirectCommand}"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                    ToolTip="Настройки"
-                    Background="Transparent"    
-                    BorderBrush="Transparent"
-                    HorizontalAlignment="Right"
-                    DockPanel.Dock="Right"
-                    Foreground="Black">
-                    <materialDesign:PackIcon Width="24" Height="24" Kind="CogOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Button>
+                
+                <materialDesign:PopupBox Grid.Column="1"
+                                         Padding="0"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         PlacementMode="BottomAndAlignRightEdges"
+                                         PopupElevation="Dp2"
+                                         PopupHorizontalOffset="0"                                         
+                                         PopupVerticalOffset="0"
+                                         PopupUniformCornerRadius="4"
+                                         SnapsToDevicePixels="True"
+                                         Margin="0 0 50 0">
+                    <StackPanel Margin="5" Width="140">
+                        <Button
+                            Command="{Binding SettingsRedirectCommand}"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Foreground="Black"
+                            Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0 0 10 0" FontSize="16">Настройки</TextBlock>
+                                <materialDesign:PackIcon Width="20" Height="20" Kind="CogOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Command="{Binding LogOutCommand}"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Foreground="Black"
+                            Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0 0 45 0" FontSize="16">Выйти</TextBlock>
+                                <materialDesign:PackIcon Width="20" Height="20" Kind="Logout" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    
+                </materialDesign:PopupBox>
             </Grid>
         </StackPanel>
     </ScrollViewer>

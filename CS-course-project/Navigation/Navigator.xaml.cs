@@ -17,6 +17,7 @@ public partial class Navigator {
         if (e.Parameter is not string) return;
         
         Frame.Content = e.Parameter switch {
+            "Login" => new Login(),
             "AdminPanel" => new AdminPanel(),
             "Settings" => new Settings(),
             _ => Frame.Content

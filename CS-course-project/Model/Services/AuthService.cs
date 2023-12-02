@@ -18,5 +18,9 @@ public static class AuthService {
         await DataManager.UpdateSession(new Session(true, data));
         return null;
     }
+
+    public static async Task<bool> LogOut() {
+        return await DataManager.RemoveSession();
+    }
 }
 
