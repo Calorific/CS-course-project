@@ -6,10 +6,16 @@ using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.model.Storage;
 using CS_course_project.Model.Timetables;
+using CS_course_project.Navigation;
 
 namespace CS_course_project.ViewModel;
 
 public class SettingsViewModel : NotifyErrorsViewModel {
+    
+    public static ICommand GoBackCommand => Command.Create(GoBack);
+    private static void GoBack(object? sender, EventArgs e) {
+        Navigator.Navigate.Execute("AdminPanel", null);
+    }
     
     #region AddCommands
     

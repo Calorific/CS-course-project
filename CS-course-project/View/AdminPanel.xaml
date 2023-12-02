@@ -4,12 +4,37 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewModel="clr-namespace:CS_course_project.ViewModel"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
       Title="AdminPanel" Height="450" Width="800">
     <Page.DataContext>
         <viewModel:AdminPanelViewModel />
     </Page.DataContext>
-    <Grid>
-        <TextBlock Text="Админка" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
-    </Grid>
+    <ScrollViewer>
+        <StackPanel Margin="0 0 0 25">
+            <Grid Margin="55 20 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.85*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            
+                <TextBlock Grid.Column="0" Text="Расписание" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
+                           DockPanel.Dock="Left" />
+                <Button
+                    Width="24" Height="24"
+                    Margin="0 0 50 0"
+                    Grid.Column="1"
+                    Command="{Binding SettingsRedirectCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    ToolTip="Настройки"
+                    Background="Transparent"    
+                    BorderBrush="Transparent"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right"
+                    Foreground="Black">
+                    <materialDesign:PackIcon Width="24" Height="24" Kind="CogOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

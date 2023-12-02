@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewModel="clr-namespace:CS_course_project.ViewModel"
       xmlns:settingsPage="clr-namespace:CS_course_project.UserControls.SettingsPage"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
       Title="Settings" Height="450" Width="800">
     <Page.DataContext>
@@ -12,8 +13,29 @@
     </Page.DataContext>
     <ScrollViewer>
         <StackPanel Margin="0 0 0 25">
-            <TextBlock Text="Настройки" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
-                       Margin="55 20 0 0" />
+            <Grid Margin="55 20 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.85*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            
+                <TextBlock Grid.Column="0" Text="Настройки" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
+                           DockPanel.Dock="Left" />
+                <Button
+                    Width="24" Height="24"
+                    Margin="0 0 50 0"
+                    Grid.Column="1"
+                    Command="{Binding GoBackCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    ToolTip="Назад"
+                    Background="Transparent"    
+                    BorderBrush="Transparent"
+                    HorizontalAlignment="Right"
+                    Foreground="Black">
+                    <materialDesign:PackIcon Width="24" Height="24" Kind="ArrowLeft" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+            
             <settingsPage:SettingsForm />
             <Grid Margin="50 10">
                 <Grid.Resources>
