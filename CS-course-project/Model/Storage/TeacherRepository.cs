@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,10 +10,18 @@ using CS_course_project.Model.Timetables;
 namespace CS_course_project.model.Storage; 
 
 public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
-    private const string Path = "./data/teachers.json";
+    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "teachers.json";
     private List<ITeacher>? _data;
 
+    private static void CheckPath() {
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!File.Exists(Path)) 
+            File.Create(Path).Dispose();
+    }
+    
     private static void SaveItems(List<ITeacher> groups) {
+        CheckPath();
         var json = JsonSerializer.Serialize(groups);
         File.WriteAllText(Path, json);
     }
@@ -34,6 +43,7 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
     }
 
     public async Task<List<ITeacher>> GetData() {
+        CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
             var json = File.ReadAllText(Path);
@@ -63,10 +73,6 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
     }
     
     public TeacherRepository() {
-        if (!Directory.Exists("./data"))
-            Directory.CreateDirectory("./data");
-        
-        if (!File.Exists(Path)) 
-            File.Create(Path).Dispose();
+        CheckPath();
     }
 }

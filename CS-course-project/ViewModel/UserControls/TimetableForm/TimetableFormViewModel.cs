@@ -147,7 +147,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
     private void UpdateTimetable(ITimetable? timetable, string group) {
         if (_isFirstRender) {
             IList<DayViewModel> days = Enumerable
-                .Range(0, int.Parse(ConfigurationManager.AppSettings["numberOfDays"]!))
+                .Range(0, int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!))
                 .Select(dayIdx => new DayViewModel(Enumerable.Range(0, _settings!.LessonsNumber)
                     .Select(lessonIdx => new LessonViewModel(dayIdx, lessonIdx, _validateSubject, _validateClassroom, _validateTeacher))
                     .ToList(), _names[dayIdx % _names.Length]))
@@ -164,7 +164,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             }
             return;
         }
-        for (var i = 0; i < int.Parse(ConfigurationManager.AppSettings["numberOfDays"]!); i++) {
+        for (var i = 0; i < int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!); i++) {
             for (var k = 0; k < _settings!.LessonsNumber; k++) {
                 if (i < timetable.Days?.Count && k < timetable.Days[i].Lessons.Count) {
                     CurrentTimetable.Days[i].Lessons[k].Classroom = timetable.Days[i].Lessons[k]?.Classroom ?? string.Empty;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
 using CS_course_project.model.Timetables;
@@ -31,10 +32,18 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
         },
     };
     
-    private const string Path = "./data/timetables.json";
+    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "timetables.json";
     private Dictionary<string, ITimetable>? _data;
+    
+    private static void CheckPath() {
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!File.Exists(Path)) 
+            File.Create(Path).Dispose();
+    }
 
     private void SaveItems(Dictionary<string, ITimetable> timetables) {
+        CheckPath();
         var json = JsonConvert.SerializeObject(timetables, _jsonSettings);
         File.WriteAllText(Path, json);
     }
@@ -55,6 +64,7 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
     }
 
     public async Task<Dictionary<string, ITimetable>> GetData() {
+        CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
             var json = File.ReadAllText(Path);
@@ -82,10 +92,6 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
     }
 
     public TimetableRepository() {
-        if (!Directory.Exists("./data"))
-            Directory.CreateDirectory("./data");
-
-        if (!File.Exists(Path))
-            File.Create(Path).Dispose();
+        CheckPath();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,10 +10,18 @@ namespace CS_course_project.model.Storage;
 public enum RepositoryItems { Groups, Classrooms, Subjects }; 
 
 public class BaseRepository : IRepository<string, List<string>, string> {
-    private readonly string _path = "./data/";
+    private readonly string _path = ConfigurationManager.AppSettings["StoragePath"]!;
     private List<string>? _data;
 
+    private void CheckPath() {
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!File.Exists(_path)) 
+            File.Create(_path).Dispose();
+    }
+    
     private void SaveItems(List<string> item) {
+        CheckPath();
         var json = JsonSerializer.Serialize(item);
         File.WriteAllText(_path, json);
     }
@@ -34,6 +43,7 @@ public class BaseRepository : IRepository<string, List<string>, string> {
     }
 
     public async Task<List<string>> GetData() {
+        CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
             var json = File.ReadAllText(_path);
@@ -64,9 +74,6 @@ public class BaseRepository : IRepository<string, List<string>, string> {
     }
 
     public BaseRepository(RepositoryItems type) {
-        if (!Directory.Exists(_path))
-            Directory.CreateDirectory(_path);
-        
         _path += type switch {
             RepositoryItems.Groups => "groups.json",
             RepositoryItems.Classrooms => "classrooms.json",
@@ -74,7 +81,6 @@ public class BaseRepository : IRepository<string, List<string>, string> {
             _ => "error.json"
         };
         
-        if (!File.Exists(_path)) 
-            File.Create(_path).Dispose();
+        CheckPath();
     }
 }

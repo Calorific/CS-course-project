@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -18,9 +19,17 @@ public class Session {
 }
 
 public class SessionRepository : IRepository<Session, Session, bool> {
-    private const string Path = "./data/session.json";
+    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "session.json";
+
+    private static void CheckPath() {
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!File.Exists(Path)) 
+            File.Create(Path).Dispose();
+    }
     
     public async Task<bool> Update(Session newItem) {
+        CheckPath();
         return await Task.Run(() => {
             try {
                 var json = JsonSerializer.Serialize(newItem);
@@ -35,6 +44,7 @@ public class SessionRepository : IRepository<Session, Session, bool> {
     }
 
     public async Task<Session> GetData() {
+        CheckPath();
         return await Task.Run(() => { 
             var json = File.ReadAllText(Path);
             if (json.Length == 0)
@@ -45,6 +55,7 @@ public class SessionRepository : IRepository<Session, Session, bool> {
     }
 
     public async Task<bool> RemoveAt(bool key) {
+        CheckPath();
         return await Task.Run(() => {
             try {
                 if (!key) return false;
@@ -57,12 +68,8 @@ public class SessionRepository : IRepository<Session, Session, bool> {
             }
         });
     }
-    
+
     public SessionRepository() {
-        if (!Directory.Exists("./data"))
-            Directory.CreateDirectory("./data");
-        
-        if (!File.Exists(Path)) 
-            File.Create(Path).Dispose();
+        CheckPath();
     }
 }
