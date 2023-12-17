@@ -56,12 +56,10 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
     private async void ChangeSettings(object? sender, EventArgs e) {
         if (HasErrors) return;
-
-        var longBreaks = (from item in LessonsArray where item.IsSelected select int.Parse(item.Data) - 1).ToList();
         
         try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
-                ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), longBreaks);
+                ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
             await DataManager.UpdateSettings(settings);
         }
         catch (Exception error) {
@@ -85,10 +83,15 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         get => _lessonDuration;
         set {
             _lessonDuration = value;
-            if (_lessonDuration.Length == 0)
+            ClearErrors(nameof(LessonDuration));
+            
+            if (_lessonDuration == string.Empty)
                 AddError(nameof(LessonDuration), "Необходимо указать значение");
-            else 
-                ClearErrors(nameof(LessonDuration));
+            else if (int.Parse(_lessonDuration) == 0)
+                AddError(nameof(LessonDuration), "Значение не может быть 0");
+            else if (IsExceedingTime()) 
+                AddError(nameof(LessonDuration), "Значение слишком большое");
+            
             Notify();
         }
     }
@@ -98,10 +101,13 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         get => _breakDuration;
         set {
             _breakDuration = value;
-            if (_breakDuration.Length == 0)
+            ClearErrors(nameof(BreakDuration));
+            
+            if (_breakDuration == string.Empty)
                 AddError(nameof(BreakDuration), "Необходимо указать значение");
-            else 
-                ClearErrors(nameof(BreakDuration));
+            else if (IsExceedingTime())
+                AddError(nameof(BreakDuration), "Значение слишком большое");
+            
             Notify();
         }
     }
@@ -111,10 +117,13 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         get => _longBreakDuration;
         set {
             _longBreakDuration = value;
-            if (_longBreakDuration.Length == 0)
+            ClearErrors(nameof(LongBreakDuration));
+            
+            if (_longBreakDuration == string.Empty)
                 AddError(nameof(LongBreakDuration), "Необходимо указать значение");
-            else 
-                ClearErrors(nameof(LongBreakDuration));
+            else if (IsExceedingTime())
+                AddError(nameof(LongBreakDuration), "Значение слишком большое");
+            
             Notify();
         }
     }
@@ -142,12 +151,14 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         get => _lessonsNumber;
         set {
             _lessonsNumber = value;
-            if (_lessonsNumber.Length == 0)
+            ClearErrors(nameof(LessonsNumber));
+            
+            if (_lessonsNumber == string.Empty)
                 AddError(nameof(LessonsNumber), "Необходимо указать значение");
-            if (int.Parse(_lessonsNumber) > 20)
-                AddError(nameof(LessonsNumber), "Значение не должно превышать 20");
-            else 
-                ClearErrors(nameof(LessonsNumber));
+            else if (int.Parse(_lessonsNumber) == 0)
+                AddError(nameof(LessonsNumber), "Значение не может быть 0");
+            else if (IsExceedingTime())
+                AddError(nameof(LessonsNumber), "Значение слишком большое");
             
             Notify();
         }
@@ -155,6 +166,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
 
     
     private List<ListItem> _lessonsArray = new();
+    private List<int> LongBreaks => (from item in LessonsArray where item.IsSelected select int.Parse(item.Data) - 1).ToList();
     public List<ListItem> LessonsArray {
         get => _lessonsArray;
         private set {
@@ -163,6 +175,18 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         }
     }
 
+    private bool IsExceedingTime() {
+        if (_lessonsNumber == string.Empty || _lessonDuration == string.Empty
+              || _longBreakDuration == string.Empty || _breakDuration == string.Empty || _lessonsNumber == string.Empty) {
+            return false;
+        }
+        var total = ParseTime(_startTime) + int.Parse(_lessonsNumber) * int.Parse(_lessonDuration)
+                                             + int.Parse(_longBreakDuration) * LongBreaks.Count
+                                             + int.Parse(_breakDuration) * (int.Parse(_lessonsNumber) - LongBreaks.Count - 1);
+        
+        return total > 24 * 60;
+    }
+    
     private static int ParseTime(string time) {
         var parts = time.Split(':');
         var res = 0;
@@ -187,7 +211,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         LongBreakDuration = settings.LongBreakDuration.ToString();
         StartTime = FormatTime(settings.StartTime);
         LessonsNumber = settings.LessonsNumber.ToString();
-        LessonsArray = Enumerable.Range(0, _settings.LessonsNumber)
+        LessonsArray = Enumerable.Range(0, _settings.LessonsNumber - 1)
             .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
     }
 
