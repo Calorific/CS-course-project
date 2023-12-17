@@ -22,6 +22,7 @@ public partial class Navigator {
             "Login" => new Login(),
             "AdminPanel" => new AdminPanel(),
             "Settings" => new Settings(),
+            "Timetable" => new Timetable(),
             _ => Frame.Content
         };
     }

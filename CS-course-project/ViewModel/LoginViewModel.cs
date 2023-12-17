@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
@@ -10,29 +11,52 @@ using CS_course_project.Navigation;
 namespace CS_course_project.ViewModel; 
 
 public class LoginViewModel : NotifyErrorsViewModel {
-    public List<string> Groups { get; } = new() { "AVT-213", "ФИТ-213" };
-
     private bool _firstRender = true;
     
     public ICommand SubmitCommand => Command.Create(LogIn);
-    private async void LogIn(object? sender, EventArgs e) {
-        var data = IsAdmin ? Password : Group;
-        var error = await AuthService.LogIn(data, IsAdmin);
+
+    private async Task LogInAdmin() {
+        var error = await AuthService.LogIn(Password, true);
         
-        if (error == "WRONG_PASSWORD" && IsAdmin)
+        if (error == "WRONG_PASSWORD")
             AddError(nameof(Password), "Неверный пароль");
-        else if (error != null) {
-            AddError(nameof(Group), "Произошла ошибка. Попробуйте позже");
-        }
-        else if (IsAdmin) {
+        else if (error != null) 
+            AddError(nameof(Password), "Произошла ошибка. Попробуйте позже");
+        else
             Navigator.Navigate.Execute("AdminPanel", null);
+    }
+    private async Task LogInUser() {
+        var error = await AuthService.LogIn(Group, false);
+        
+        if (error == "INVALID_GROUP")
+            AddError(nameof(Group), "Расписание еще не назначен");
+        else if (error != null) 
+            AddError(nameof(Group), "Произошла ошибка. Попробуйте позже");
+        else
+            Navigator.Navigate.Execute("Timetable", null);
+    }
+    private async void LogIn(object? sender, EventArgs e) {
+        if (IsAdmin)
+            await LogInAdmin();
+        else 
+            await LogInUser();
+    }
+
+    private List<string> _groups = new();
+
+    public List<string> Groups {
+        get => _groups;
+        private set {
+            if (_groups == value) return;
+            _groups = value;
+            Notify();
         }
     }
 
-    public Visibility GroupVisibility { get; set; } = Visibility.Collapsed;
-    public Visibility PasswordVisibility { get; set; } = Visibility.Visible;
+    public Visibility GroupVisibility { get; set; } = Visibility.Visible;
+    public Visibility PasswordVisibility { get; set; } = Visibility.Collapsed;
 
-    private bool _isAdmin = true;
+    private bool _isAdmin;
     public bool IsAdmin {
         get => _isAdmin;
         set {
@@ -91,14 +115,26 @@ public class LoginViewModel : NotifyErrorsViewModel {
         CanSubmit = false;
     }
 
-    private static async void CheckSession() {
+    private async void LoadData() {
+        Groups = new List<string>((await DataManager.LoadTimetables()).Keys);
+        Group = Groups[0];
+    }
+    
+    private async void CheckSession() {
         var session = await DataManager.LoadSession();
-        if (session == null) return;
+        if (session == null) {
+            LoadData();
+            return;
+        }
         
         var error = await AuthService.LogIn(session.Data, session.IsAdmin);
         
-        if (error != null) await DataManager.RemoveSession();
-        else Navigator.Navigate.Execute("AdminPanel", null);
+        if (error == null) {
+            Navigator.Navigate.Execute(session.IsAdmin ? "AdminPanel" : "Timetable", null);
+            return;
+        }
+        
+        LoadData();
     }
     
     public LoginViewModel() {
