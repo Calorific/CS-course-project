@@ -1,17 +1,39 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.ViewModel.UserControls;
 
 namespace CS_course_project.UserControls.SettingsPage; 
 
-public partial class EditableList {
-    public static readonly DependencyProperty ItemsProperty =
-        DependencyProperty.Register(nameof(Items), typeof(ObservableCollection<string>), typeof(EditableList));
+public class Item {
+    public string Data { get; }
+    public string Id { get; }
 
-    public ObservableCollection<string> Items {
-        get => (ObservableCollection<string>)GetValue(ItemsProperty);
+    public Item(string data) {
+        Data = data;
+        Id = data;
+    }
+    
+    public Item(string data, string id) {
+        Data = data;
+        Id = id;
+    }
+}
+
+public partial class EditableList {
+    private static void OnItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        var myControl = (EditableList)d;
+        if (myControl.Form.DataContext is not EditableListViewModel viewModel) return;
+        viewModel.Items = myControl.Items;
+    }
+    
+    public static readonly DependencyProperty ItemsProperty =
+        DependencyProperty.Register(nameof(Items), typeof(ObservableCollection<Item>), 
+            typeof(EditableList), new FrameworkPropertyMetadata(null,
+            OnItemsChanged));
+
+    public ObservableCollection<Item> Items {
+        get => (ObservableCollection<Item>)GetValue(ItemsProperty);
         set => SetValue(ItemsProperty, value);
     }
     

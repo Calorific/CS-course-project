@@ -5,14 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewModel="clr-namespace:CS_course_project.ViewModel"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:adminPanelPage="clr-namespace:CS_course_project.UserControls.AdminPanelPage"
       mc:Ignorable="d"
-      Title="AdminPanel" Height="450" Width="800">
+      Title="AdminPanel">
     <Page.DataContext>
         <viewModel:AdminPanelViewModel />
     </Page.DataContext>
     <ScrollViewer>
         <StackPanel Margin="0 0 0 25">
-            <Grid Margin="55 20 0 0">
+            <Grid Margin="55 20 0 20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.85*"></ColumnDefinition>
                     <ColumnDefinition Width="0.15*"></ColumnDefinition>
@@ -56,9 +57,11 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
-                    
                 </materialDesign:PopupBox>
             </Grid>
+            
+            <adminPanelPage:TimetableForm />
+            
         </StackPanel>
     </ScrollViewer>
 </Page>

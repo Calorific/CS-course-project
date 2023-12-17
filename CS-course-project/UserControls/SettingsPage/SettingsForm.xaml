@@ -130,12 +130,12 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </StackPanel>
-                <Button
-                    Margin="5 20 0 0"
-                    Content="Сохранить"
-                    IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                    Command="{Binding SubmitCommand}"/>
+            <Button
+                Margin="5 20 0 0"
+                Content="Сохранить"
+                IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                Command="{Binding SubmitCommand}"/>
         </StackPanel>
     </StackPanel>
     

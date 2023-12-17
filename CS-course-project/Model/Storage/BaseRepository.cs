@@ -8,7 +8,7 @@ namespace CS_course_project.model.Storage;
 
 public enum RepositoryItems { Groups, Classrooms, Subjects }; 
 
-public class BaseRepository : IRepository<string, List<string>, int> {
+public class BaseRepository : IRepository<string, List<string>, string> {
     private readonly string _path = "./data/";
     private List<string>? _data;
 
@@ -45,12 +45,13 @@ public class BaseRepository : IRepository<string, List<string>, int> {
         });
     }
 
-    public async Task<bool> RemoveAt(int key) {
+    public async Task<bool> RemoveAt(string item) {
         return await Task.Run(async () => {
             try {
                 var data = await GetData();
-                if (key < 0 || key >= data.Count) return false;
-                data.RemoveAt(key);
+                var idx = data.FindIndex(v => v == item);
+                if (idx >= 0 && idx < data.Count)
+                    data.RemoveAt(idx);
                 _data = data;
                 SaveItems(data);
                 return true;

@@ -8,7 +8,7 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Storage; 
 
-public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, int> {
+public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
     private const string Path = "./data/teachers.json";
     private List<ITeacher>? _data;
 
@@ -45,12 +45,12 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, int> {
         });
     }
 
-    public async Task<bool> RemoveAt(int key) {
+    public async Task<bool> RemoveAt(string id) {
         return await Task.Run(async () => {
             try {
                 var teachers = await GetData();
-                if (key < 0 || key >= teachers.Count) return false;
-                teachers.RemoveAt(key);
+                var idx = teachers.FindIndex(t => t.Id == id);
+                teachers.RemoveAt(idx);
                 SaveItems(teachers);
                 _data = teachers;
                 return true;

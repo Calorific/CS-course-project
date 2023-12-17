@@ -22,6 +22,14 @@ public static class DataManager {
 
     #endregion
 
+    #region Timetable
+
+    public static async Task<Dictionary<string, ITimetable>> LoadTimetables() => await TimetableRepository.GetData();
+    public static async Task<bool> AddTimetable(ITimetable newItem) => await TimetableRepository.Update(newItem);
+    public static async Task<bool> RemoveTimeTable(string key) => await TimetableRepository.RemoveAt(key);
+
+    #endregion
+    
 
     #region Session
 
@@ -36,7 +44,7 @@ public static class DataManager {
     
     public static async Task<List<string>> LoadGroups() => await GroupRepository.GetData();
     public static async Task<bool> UpdateGroups(string newItem) => await GroupRepository.Update(newItem);
-    public static async Task<bool> GroupsRemoveAt(int idx) => await GroupRepository.RemoveAt(idx);
+    public static async Task<bool> RemoveGroup(string item) => await GroupRepository.RemoveAt(item);
 
     #endregion
     
@@ -45,7 +53,7 @@ public static class DataManager {
     
     public static async Task<List<ITeacher>> LoadTeachers() => await TeachersRepository.GetData();
     public static async Task<bool> UpdateTeachers(Teacher newItem) => await TeachersRepository.Update(newItem);
-    public static async Task<bool> TeachersRemoveAt(int idx) => await TeachersRepository.RemoveAt(idx);
+    public static async Task<bool> RemoveTeacher(string id) => await TeachersRepository.RemoveAt(id);
 
     #endregion
     
@@ -54,7 +62,7 @@ public static class DataManager {
     
     public static async Task<List<string>> LoadClassrooms() => await ClassroomsRepository.GetData();
     public static async Task<bool> UpdateClassrooms(string newItem) => await ClassroomsRepository.Update(newItem);
-    public static async Task<bool> ClassroomsRemoveAt(int idx) => await ClassroomsRepository.RemoveAt(idx);
+    public static async Task<bool> RemoveClassroom(string item) => await ClassroomsRepository.RemoveAt(item);
 
     #endregion
     
@@ -63,7 +71,7 @@ public static class DataManager {
     
     public static async Task<List<string>> LoadSubjects() => await SubjectsRepository.GetData();
     public static async Task<bool> UpdateSubjects(string newItem) => await SubjectsRepository.Update(newItem);
-    public static async Task<bool> SubjectsRemoveAt(int idx) => await SubjectsRepository.RemoveAt(idx);
+    public static async Task<bool> RemoveSubject(string item) => await SubjectsRepository.RemoveAt(item);
 
     #endregion
     

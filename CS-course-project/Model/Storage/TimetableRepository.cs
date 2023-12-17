@@ -1,20 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using CS_course_project.model.Timetables;
 using CS_course_project.Model.Timetables;
+using Newtonsoft.Json;
 
-namespace CS_course_project.model.Storage; 
+namespace CS_course_project.model.Storage;
+
+public class AbstractConverter<TReal, TAbstract> 
+    : JsonConverter where TReal : TAbstract
+{
+    public override bool CanConvert(Type objectType)
+        => objectType == typeof(TAbstract);
+
+    public override object? ReadJson(JsonReader reader, Type type, object? value, JsonSerializer jser) 
+        => jser.Deserialize<TReal>(reader);
+
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer jser)
+        => jser.Serialize(writer, value);
+}
 
 public class TimetableRepository : IRepository<ITimetable, Dictionary<string, ITimetable>, string> {
+    private readonly JsonSerializerSettings _jsonSettings = new()
+    {
+        Converters = {
+            new AbstractConverter<Timetable, ITimetable>(),
+            new AbstractConverter<Day, IDay>(),
+            new AbstractConverter<Lesson, ILesson>(),
+        },
+    };
+    
     private const string Path = "./data/timetables.json";
     private Dictionary<string, ITimetable>? _data;
-    
-    private static void SaveItems(Dictionary<string, ITimetable> timetables) {
-        var json = JsonSerializer.Serialize(timetables);
+
+    private void SaveItems(Dictionary<string, ITimetable> timetables) {
+        var json = JsonConvert.SerializeObject(timetables, _jsonSettings);
         File.WriteAllText(Path, json);
     }
 
@@ -39,8 +60,7 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
             var json = File.ReadAllText(Path);
             if (json.Length == 0)
                 return new Dictionary<string, ITimetable>();
-            var jsonData = JsonSerializer.Deserialize<Dictionary<string, Timetable>>(json);
-            var data = jsonData?.Keys.ToDictionary<string?, string, ITimetable>(key => key, key => jsonData[key]);
+            var data = JsonConvert.DeserializeObject<Dictionary<string, ITimetable>>(json, _jsonSettings);
             _data = data;
             return data ?? new Dictionary<string, ITimetable>();
         });
@@ -53,19 +73,19 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
                 data.Remove(key);
                 SaveItems(data);
                 return true;
-            } 
+            }
             catch (Exception e) {
                 Console.WriteLine("Error: " + e.Message);
                 return false;
             }
         });
     }
-    
+
     public TimetableRepository() {
         if (!Directory.Exists("./data"))
             Directory.CreateDirectory("./data");
-        
-        if (!File.Exists(Path)) 
+
+        if (!File.Exists(Path))
             File.Create(Path).Dispose();
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using CS_course_project.Commands;
+using CS_course_project.UserControls.SettingsPage;
 
 namespace CS_course_project.ViewModel.UserControls; 
 
 public class EditableListViewModel : NotifyErrorsViewModel {
     
-    public ObservableCollection<string>? Items;
+    public ObservableCollection<Item>? Items;
 
     public ICommand? BaseCommand { get; set; }
     
@@ -20,7 +22,7 @@ public class EditableListViewModel : NotifyErrorsViewModel {
             AddError(nameof(NewItem), "Нужно указать значение");
             return;
         }
-        if (IsUnique && Items.IndexOf(NewItem) != -1) {
+        if (IsUnique && Items.FirstOrDefault(item => item.Data == _newItem) != null) {
             AddError(nameof(NewItem), "Значение уже существует");
             return;
         }

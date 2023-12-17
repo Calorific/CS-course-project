@@ -7,7 +7,7 @@
       xmlns:settingsPage="clr-namespace:CS_course_project.UserControls.SettingsPage"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
-      Title="Settings" Height="450" Width="800">
+      Title="Settings">
     <Page.DataContext>
         <viewModel:SettingsViewModel />
     </Page.DataContext>
@@ -37,6 +37,7 @@
             </Grid>
             
             <settingsPage:SettingsForm />
+            
             <Grid Margin="50 10">
                 <Grid.Resources>
                     <Style TargetType="Border">
@@ -54,7 +55,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
                         <settingsPage:EditableList
-                            Items="{Binding Groups}"
+                            Items="{Binding GroupItems}"
                             RemoveCommand="{Binding RemoveGroupCommand}"
                             AddCommand="{Binding AddGroupCommand}" />
                     </StackPanel>
@@ -63,7 +64,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
                         <settingsPage:EditableList
-                            Items="{Binding TeachersNames}"
+                            Items="{Binding TeacherItems}"
                             RemoveCommand="{Binding RemoveTeacherCommand}"
                             AddCommand="{Binding AddTeacherCommand}"
                             IsUnique="False" />
@@ -73,7 +74,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
                         <settingsPage:EditableList
-                            Items="{Binding Classrooms}"
+                            Items="{Binding ClassroomItems}"
                             RemoveCommand="{Binding RemoveClassroomCommand}"
                             AddCommand="{Binding AddClassroomCommand}" />
                     </StackPanel>
@@ -82,7 +83,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
                         <settingsPage:EditableList
-                            Items="{Binding Subjects}"
+                            Items="{Binding SubjectItems}"
                             RemoveCommand="{Binding RemoveSubjectCommand}"
                             AddCommand="{Binding AddSubjectCommand}" />
                     </StackPanel>
