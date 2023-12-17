@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CS_course_project.Commands;
+using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.model.Storage;
 using CS_course_project.Model.Timetables;
 

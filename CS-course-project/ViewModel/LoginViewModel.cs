@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Commands;
-using CS_course_project.Model.Services;
+using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.model.Storage;
 using CS_course_project.Navigation;
 
@@ -93,7 +93,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
 
     private static async void CheckSession() {
         var session = await DataManager.LoadSession();
-        if (session.Data == null) return;
+        if (session == null) return;
         
         var error = await AuthService.LogIn(session.Data, session.IsAdmin);
         

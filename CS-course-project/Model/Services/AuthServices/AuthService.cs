@@ -2,7 +2,7 @@
 using System.Windows;
 using CS_course_project.model.Storage;
 
-namespace CS_course_project.Model.Services; 
+namespace CS_course_project.Model.Services.AuthServices; 
 
 public static class AuthService {
     public static async Task<string?> LogIn(string data, bool isAdmin) {

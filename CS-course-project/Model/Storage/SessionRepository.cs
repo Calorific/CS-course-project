@@ -3,22 +3,12 @@ using System.Configuration;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CS_course_project.Model.Services.AuthServices;
 
 namespace CS_course_project.model.Storage;
 
-public class Session {
-    public bool IsAdmin { get; set; }
-    public string? Data { get; set; }
 
-    public Session(bool isAdmin, string data) {
-        IsAdmin = isAdmin;
-        Data = data;
-    }
-    
-    public Session() {}
-}
-
-public class SessionRepository : IRepository<Session, Session, bool> {
+public class SessionRepository : IRepository<ISession, ISession?, bool> {
     private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "session.json";
 
     private static void CheckPath() {
@@ -28,7 +18,7 @@ public class SessionRepository : IRepository<Session, Session, bool> {
             File.Create(Path).Dispose();
     }
     
-    public async Task<bool> Update(Session newItem) {
+    public async Task<bool> Update(ISession newItem) {
         CheckPath();
         return await Task.Run(() => {
             try {
@@ -43,14 +33,14 @@ public class SessionRepository : IRepository<Session, Session, bool> {
         });
     }
 
-    public async Task<Session> GetData() {
+    public async Task<ISession?> GetData() {
         CheckPath();
         return await Task.Run(() => { 
             var json = File.ReadAllText(Path);
             if (json.Length == 0)
-                return new Session();
+                return null;
             var data = JsonSerializer.Deserialize<Session>(json);
-            return data ?? new Session();
+            return data as ISession ?? null;
         });
     }
 

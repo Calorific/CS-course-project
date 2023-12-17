@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Storage; 
@@ -33,8 +34,8 @@ public static class DataManager {
 
     #region Session
 
-    public static async Task<Session> LoadSession() => await SessionRepository.GetData();
-    public static async Task<bool> UpdateSession(Session newItem) => await SessionRepository.Update(newItem);
+    public static async Task<ISession?> LoadSession() => await SessionRepository.GetData();
+    public static async Task<bool> UpdateSession(ISession newItem) => await SessionRepository.Update(newItem);
     public static async Task<bool> RemoveSession() => await SessionRepository.RemoveAt(true);
 
     #endregion
