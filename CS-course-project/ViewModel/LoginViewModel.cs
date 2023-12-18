@@ -60,6 +60,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
     public bool IsAdmin {
         get => _isAdmin;
         set {
+            if (Groups.Count == 0 && value != true) return;
             _isAdmin = value;
             PasswordVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             GroupVisibility = !value ? Visibility.Visible : Visibility.Collapsed;
@@ -117,7 +118,8 @@ public class LoginViewModel : NotifyErrorsViewModel {
 
     private async void LoadData() {
         Groups = new List<string>((await DataManager.LoadTimetables()).Keys);
-        Group = Groups[0];
+        if (Group.Length == 0) IsAdmin = true;
+        else Group = Groups[0];
     }
     
     private async void CheckSession() {

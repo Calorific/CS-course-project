@@ -27,7 +27,7 @@ public static class DataManager {
 
     public static async Task<Dictionary<string, ITimetable>> LoadTimetables() => await TimetableRepository.GetData();
     public static async Task<bool> AddTimetable(ITimetable newItem) => await TimetableRepository.Update(newItem);
-    public static async Task<bool> RemoveTimeTable(string key) => await TimetableRepository.RemoveAt(key);
+    private static async Task RemoveTimeTable(string key) => await TimetableRepository.RemoveAt(key);
 
     #endregion
     
@@ -45,7 +45,10 @@ public static class DataManager {
     
     public static async Task<List<string>> LoadGroups() => await GroupRepository.GetData();
     public static async Task<bool> UpdateGroups(string newItem) => await GroupRepository.Update(newItem);
-    public static async Task<bool> RemoveGroup(string item) => await GroupRepository.RemoveAt(item);
+    public static async Task<bool> RemoveGroup(string item) {
+        await RemoveTimeTable(item);
+        return await GroupRepository.RemoveAt(item);
+    }
 
     #endregion
     
