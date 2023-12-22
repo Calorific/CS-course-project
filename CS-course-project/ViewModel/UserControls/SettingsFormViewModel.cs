@@ -46,7 +46,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         }
         ClearErrors(nameof(NewPassword));
         var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
-            int.Parse(LongBreakDuration), ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
+            int.Parse(LongBreakDuration), TimeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
             int.Parse(LessonsNumber), _settings.LongBreakLessons);
         _settings = settings;
         await DataManager.UpdateSettings(settings);
@@ -60,7 +60,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         
         try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
-                ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
+                TimeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
             await DataManager.UpdateSettings(settings);
         }
         catch (Exception error) {
@@ -181,27 +181,12 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
               || _longBreakDuration == string.Empty || _breakDuration == string.Empty || _lessonsNumber == string.Empty) {
             return false;
         }
-        var total = ParseTime(_startTime) + int.Parse(_lessonsNumber) * int.Parse(_lessonDuration)
-                                             + int.Parse(_longBreakDuration) * LongBreaks.Count
-                                             + int.Parse(_breakDuration) * (int.Parse(_lessonsNumber) - LongBreaks.Count - 1);
+        var total = TimeConverter.ParseTime(_startTime)
+                    + int.Parse(_lessonsNumber) * int.Parse(_lessonDuration)
+                    + int.Parse(_longBreakDuration) * LongBreaks.Count
+                    + int.Parse(_breakDuration) * (int.Parse(_lessonsNumber) - LongBreaks.Count - 1);
         
         return total > 24 * 60;
-    }
-    
-    private static int ParseTime(string time) {
-        var parts = time.Split(':');
-        var res = 0;
-        
-        if (int.TryParse(parts[0], out var hours))
-            res += hours * 60;
-        if (parts.Length > 1 && int.TryParse(parts[1], out var minutes))
-            res += minutes;
-        return res;
-    }
-
-    private static string FormatTime(int time) {
-        var minutes = time % 60;
-        return (time / 60).ToString() + ':' + (minutes < 10 ? "0" : "") + minutes;
     }
     
     private async void Init() {
@@ -210,7 +195,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         LessonDuration = settings.LessonDuration.ToString();
         BreakDuration = settings.BreakDuration.ToString();
         LongBreakDuration = settings.LongBreakDuration.ToString();
-        StartTime = FormatTime(settings.StartTime);
+        StartTime = TimeConverter.FormatTime(settings.StartTime);
         LessonsNumber = settings.LessonsNumber.ToString();
         LessonsArray = Enumerable.Range(0, _settings.LessonsNumber - 1)
             .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();

@@ -35,7 +35,68 @@
                     <materialDesign:PackIcon Width="24" Height="24" Kind="Logout" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
             </Grid>
+            <ItemsControl ItemsSource="{Binding Days}" HorizontalAlignment="Center"
+                 VerticalAlignment="Top" Width="730" Margin="15   10 10 10">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Width="350">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="{Binding Name}" />
+                        <ItemsControl ItemsSource="{Binding Lessons}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="Black" BorderThickness="1" Margin="5" Padding="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                                Text="{Binding Time}" />
+                                            
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                                Text="{Binding Classroom}" />
+
+                                            <TextBlock 
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                                Text="{Binding Subject}"
+                                                Margin="10,0,0,0" />
+                                            
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                                Text="{Binding Teacher.Name}"
+                                                ToolTip="{Binding Teacher.Id}"
+                                                Margin="10,0,0,0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         </StackPanel>
     </ScrollViewer>
 </Page>
