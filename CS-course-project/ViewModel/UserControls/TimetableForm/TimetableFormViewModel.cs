@@ -38,7 +38,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
 
 
     private Dictionary<string, ITimetable>? _timetables;
-    private TimetableViewModel _currentTimetable = new ("", new List<DayViewModel>());
+    private TimetableViewModel _currentTimetable = new (new List<DayViewModel>());
     private bool _isFirstRender = true;
     
     public TimetableViewModel CurrentTimetable {
@@ -100,7 +100,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
                 AddError(nameof(CurrentGroup), "Нужно выбрать существующую группу");
             else if (_timetables != null) {
                 _timetables.TryGetValue(value, out var timetable);
-                UpdateTimetable(timetable, value);
+                UpdateTimetable(timetable);
             }
             Notify();
         }
@@ -148,7 +148,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
         return null;
     }
     
-    private void UpdateTimetable(ITimetable? timetable, string group) {
+    private void UpdateTimetable(ITimetable? timetable) {
         if (_isFirstRender) {
             IList<DayViewModel> days = Enumerable
                 .Range(0, int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!))
@@ -156,7 +156,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
                     .Select(lessonIdx => new LessonViewModel(dayIdx, lessonIdx, _validateSubject, _validateClassroom, _validateTeacher))
                     .ToList(), _names[dayIdx % _names.Length]))
                 .ToList();
-            CurrentTimetable = new TimetableViewModel(group, days);
+            CurrentTimetable = new TimetableViewModel(days);
             _isFirstRender = false;
         }
         

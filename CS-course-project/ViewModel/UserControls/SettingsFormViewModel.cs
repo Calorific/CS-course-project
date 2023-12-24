@@ -64,7 +64,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     private async void ChangeSettings(object? sender, EventArgs e) {
         if (HasErrors || _dataManager == null || _timeConverter == null) return;
 
-    try {
+        try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
                 _timeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
             await _dataManager.UpdateSettings(settings);
@@ -170,7 +170,6 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
             Notify();
         }
     }
-
     
     private List<ListItem> _lessonsArray = new();
     private List<int> LongBreaks => (from item in LessonsArray where item.IsSelected select int.Parse(item.Data) - 1).ToList();

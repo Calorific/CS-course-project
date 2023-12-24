@@ -60,6 +60,24 @@ public class Settings : ISettings {
 
     [JsonConstructor]
     public Settings(int lessonDuration, int breakDuration, int longBreakDuration, int startTime, string hashedAdminPassword, int lessonsNumber, List<int> longBreakLessons) {
+        if (lessonDuration <= 0)
+            throw new ArgumentException("Длина урока должна быть больше 0");
+        if (breakDuration < 0)
+            throw new ArgumentException("Перемена не может быть отрицательной");
+        if (longBreakDuration < 0)
+            throw new ArgumentException("Большая перемена не может быть отрицательной");
+        if (startTime < 0)
+            throw new ArgumentException("Время начала не может быть отрицательным");
+        if (lessonsNumber < 0)
+            throw new ArgumentException("Количество уроков должно быть больше 0");
+        if (string.IsNullOrEmpty(hashedAdminPassword))
+            throw new ArgumentException("Пароль не должен быть пустым");
+        
+        var totalTime = startTime + lessonsNumber * lessonDuration + longBreakDuration * longBreakLessons.Count
+                        + breakDuration * (lessonsNumber - longBreakLessons.Count - 1);
+        if (totalTime > 24 * 60)
+            throw new ArgumentException("Общее время не должно превышать 24 часа");
+        
         HashedAdminPassword = hashedAdminPassword;
         LessonDuration = lessonDuration;
         BreakDuration = breakDuration;

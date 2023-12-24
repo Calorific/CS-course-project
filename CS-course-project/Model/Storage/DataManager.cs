@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.Model.Timetables;
@@ -41,7 +44,39 @@ public class DataManager : IDataManager {
     #region Timetable
 
     public async Task<Dictionary<string, ITimetable>> GetTimetables() => await _timetablesRepository.Read();
-    public async Task<bool> AddTimetable(ITimetable newItem) => await _timetablesRepository.Update(newItem);
+    public async Task<bool> AddTimetable(ITimetable newTimetable) {
+        var timetables = await GetTimetables();
+        var settings = await GetSettings();
+        foreach (var group in timetables.Keys) {
+            if (group == newTimetable.Group) continue;
+            
+            var currentTimetable = timetables[group];
+            for (var i = 0; i < int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!); i++) {
+                if (i >= currentTimetable.Days.Count) break;
+                
+                for (var k = 0; k < settings.LessonsNumber; k++) {
+                    if (k >= currentTimetable.Days[i].Lessons.Count) break;
+                    
+                    var currentLesson = currentTimetable.Days[i].Lessons[k];
+                    var newLesson = newTimetable.Days[i].Lessons[k];
+
+                    if (currentLesson == null || newLesson == null) continue;
+                    
+                    if (currentLesson.Classroom == newLesson.Classroom) {
+                        throw new ArgumentException(
+                            $"Аудитория {newLesson.Classroom} занята группой {group}");
+                    }
+                        
+                    if (currentLesson.Teacher == newLesson.Teacher) {
+                        throw new ArgumentException(
+                            $"Преподаватель {newLesson.Teacher} в этот момент у группы {group}");
+                    }
+                }
+                
+            }
+        }
+        return await _timetablesRepository.Update(newTimetable);
+    }
     private async Task RemoveTimeTable(string key) => await _timetablesRepository.Delete(key);
 
     #endregion
@@ -59,7 +94,13 @@ public class DataManager : IDataManager {
     #region Groups
     
     public async Task<List<string>> GetGroups() => await _groupsRepository.Read();
-    public async Task<bool> UpdateGroups(string newItem) => await _groupsRepository.Update(newItem);
+    public async Task<bool> UpdateGroups(string newGroup) {
+        var groups = await GetGroups();
+        if (groups.Contains(newGroup)) {
+            throw new ArgumentException("Такая группа уже существует");
+        }
+        return await _groupsRepository.Update(newGroup);
+    }
     public async Task<bool> RemoveGroup(string item) {
         await RemoveTimeTable(item);
         return await _groupsRepository.Delete(item);
@@ -71,7 +112,12 @@ public class DataManager : IDataManager {
     #region Teachers
     
     public async Task<List<ITeacher>> GetTeachers() => await _teachersRepository.Read();
-    public async Task<bool> UpdateTeachers(Teacher newItem) => await _teachersRepository.Update(newItem);
+    public async Task<bool> UpdateTeachers(Teacher newTeacher) {
+        var teachers = await GetTeachers();
+        if (teachers.Any(t => t.Id == newTeacher.Id))
+            throw new ArgumentException("Учитель уже существует");
+        return await _teachersRepository.Update(newTeacher);
+    }
     public async Task<bool> RemoveTeacher(string id) => await _teachersRepository.Delete(id);
 
     #endregion
@@ -80,7 +126,12 @@ public class DataManager : IDataManager {
     #region Classrooms
     
     public async Task<List<string>> GetClassrooms() => await _classroomsRepository.Read();
-    public async Task<bool> UpdateClassrooms(string newItem) => await _classroomsRepository.Update(newItem);
+    public async Task<bool> UpdateClassrooms(string newClassroom) {
+        var classrooms = await GetClassrooms();
+        if (classrooms.Contains(newClassroom))
+            throw new ArgumentException("Аудитория уже существует");
+        return await _classroomsRepository.Update(newClassroom);
+    }
     public async Task<bool> RemoveClassroom(string item) => await _classroomsRepository.Delete(item);
 
     #endregion
@@ -89,7 +140,12 @@ public class DataManager : IDataManager {
     #region Subjects
     
     public async Task<List<string>> GetSubjects() => await _subjectsRepository.Read();
-    public async Task<bool> UpdateSubjects(string newItem) => await _subjectsRepository.Update(newItem);
+    public async Task<bool> UpdateSubjects(string newSubject) {
+        var subjects = await GetSubjects();
+        if (subjects.Contains(newSubject))
+            throw new ArgumentException("Предмет уже существует");
+        return await _subjectsRepository.Update(newSubject);
+    }
     public async Task<bool> RemoveSubject(string item) => await _subjectsRepository.Delete(item);
 
     #endregion

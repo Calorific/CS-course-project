@@ -9,7 +9,7 @@ public interface IDataManager {
     #region Timetable
 
     public Task<Dictionary<string, ITimetable>> GetTimetables();
-    public Task<bool> AddTimetable(ITimetable newItem);
+    public Task<bool> AddTimetable(ITimetable newTimetable);
 
     #endregion
     
@@ -44,7 +44,7 @@ public interface IDataManager {
     #region Classrooms
     
     public Task<List<string>> GetClassrooms();
-    public Task<bool> UpdateClassrooms(string newItem);
+    public Task<bool> UpdateClassrooms(string newClassroom);
     public Task<bool> RemoveClassroom(string item);
 
     #endregion
@@ -53,7 +53,7 @@ public interface IDataManager {
     #region Subjects
     
     public Task<List<string>> GetSubjects();
-    public Task<bool> UpdateSubjects(string newItem);
+    public Task<bool> UpdateSubjects(string newSubject);
     public Task<bool> RemoveSubject(string item);
 
     #endregion
