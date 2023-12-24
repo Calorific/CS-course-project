@@ -50,6 +50,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
             return;
         }
         ClearErrors(nameof(NewPassword));
+        
         var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
             int.Parse(LongBreakDuration), _timeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
             int.Parse(LessonsNumber), _settings.LongBreakLessons);
@@ -66,8 +67,11 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
 
         try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
-                _timeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
+                _timeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), 
+                LongBreaks.Where(l => l < int.Parse(LessonsNumber) - 1).ToList());
             await _dataManager.UpdateSettings(settings);
+            LessonsArray = Enumerable.Range(0, settings.LessonsNumber - 1)
+                .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
         }
         catch (Exception error) {
             Console.WriteLine(error.Message);

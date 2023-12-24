@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace CS_course_project.Model.Timetables; 
@@ -72,6 +73,8 @@ public class Settings : ISettings {
             throw new ArgumentException("Количество уроков должно быть больше 0");
         if (string.IsNullOrEmpty(hashedAdminPassword))
             throw new ArgumentException("Пароль не должен быть пустым");
+        if (longBreakLessons.Any(lesson => !(lesson < lessonsNumber - 1)))
+            throw new ArgumentException("Некорректный список больших перемен");
         
         var totalTime = startTime + lessonsNumber * lessonDuration + longBreakDuration * longBreakLessons.Count
                         + breakDuration * (lessonsNumber - longBreakLessons.Count - 1);
