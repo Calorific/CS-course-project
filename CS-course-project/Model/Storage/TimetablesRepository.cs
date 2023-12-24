@@ -22,7 +22,7 @@ public class AbstractConverter<TReal, TAbstract>
         => jser.Serialize(writer, value);
 }
 
-public class TimetableRepository : IRepository<ITimetable, Dictionary<string, ITimetable>, string> {
+public class TimetablesRepository : IRepository<ITimetable, Dictionary<string, ITimetable>, string> {
     private readonly JsonSerializerSettings _jsonSettings = new()
     {
         Converters = {
@@ -51,7 +51,7 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
     public async Task<bool> Update(ITimetable newItem) {
         return await Task.Run(async () => {
             try {
-                var timetables = await GetData();
+                var timetables = await Read();
                 timetables[newItem.Group] = newItem;
                 SaveItems(timetables);
                 return true;
@@ -63,7 +63,7 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
         });
     }
 
-    public async Task<Dictionary<string, ITimetable>> GetData() {
+    public async Task<Dictionary<string, ITimetable>> Read() {
         CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
@@ -76,10 +76,10 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
         });
     }
 
-    public async Task<bool> RemoveAt(string key) {
+    public async Task<bool> Delete(string key) {
         return await Task.Run(async () => {
             try {
-                var data = await GetData();
+                var data = await Read();
                 data.Remove(key);
                 SaveItems(data);
                 return true;
@@ -91,7 +91,7 @@ public class TimetableRepository : IRepository<ITimetable, Dictionary<string, IT
         });
     }
 
-    public TimetableRepository() {
+    public TimetablesRepository() {
         CheckPath();
     }
 }

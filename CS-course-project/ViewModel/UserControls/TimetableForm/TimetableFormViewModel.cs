@@ -12,10 +12,14 @@ using CS_course_project.Navigation;
 namespace CS_course_project.ViewModel.UserControls.TimetableForm;
 
 public class TimetableFormViewModel : NotifyErrorsViewModel {
+    private readonly INavigator? _navigator;
+    private readonly IDataManager? _dataManager;
+
     private readonly string[] _names = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
     
     public ICommand SubmitCommand => Command.Create(Submit);
     private async void Submit(object? sender, EventArgs e) {
+        if (_dataManager == null) return;
         if (_currentTimetable.Days.Any(day => day.Lessons.Any(lesson => lesson.HasErrors)))
             return;
         var days = new List<IDay>();
@@ -29,7 +33,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             }
             days.Add(new Day(lessons));
         }
-        await DataManager.AddTimetable(new Timetable(_currentGroup, days));
+        await _dataManager.AddTimetable(new Timetable(_currentGroup, days));
     }
 
 
@@ -180,22 +184,27 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
     }
     
     private async void CheckRedirect() {
-        Groups = new List<string>((await DataManager.LoadGroups()).OrderBy(s => s.ToLower()));
-        _teachers = new List<ITeacher>((await DataManager.LoadTeachers()).OrderBy(t => t.Name.ToLower()));
-        _classrooms = new List<string>((await DataManager.LoadClassrooms()).OrderBy(s => s.ToLower()));
-        _subjects = new List<string>((await DataManager.LoadSubjects()).OrderBy(s => s.ToLower()));
-        _timetables = await DataManager.LoadTimetables();
-        _settings = await DataManager.LoadSettings();
+        if (_dataManager == null || _navigator == null) return;
+        Groups = new List<string>((await _dataManager.GetGroups()).OrderBy(s => s.ToLower()));
+        _teachers = new List<ITeacher>((await _dataManager.GetTeachers()).OrderBy(t => t.Name.ToLower()));
+        _classrooms = new List<string>((await _dataManager.GetClassrooms()).OrderBy(s => s.ToLower()));
+        _subjects = new List<string>((await _dataManager.GetSubjects()).OrderBy(s => s.ToLower()));
+        _timetables = await _dataManager.GetTimetables();
+        _settings = await _dataManager.GetSettings();
         
         if (Groups.Count == 0 || _teachers.Count == 0 || _classrooms.Count == 0 || _subjects.Count == 0) {
-            Navigator.Navigate.Execute("Settings", null);
+            _navigator.Navigate.Execute(Pages.Settings, null);
             return;
         }
         
         CurrentGroup = Groups[0];
     }
 
-    public TimetableFormViewModel() {
+    public TimetableFormViewModel(INavigator navigator, IDataManager dataManager) {
+        _navigator = navigator;
+        _dataManager = dataManager;
         CheckRedirect();
     }
+    
+    public TimetableFormViewModel() {}
 }

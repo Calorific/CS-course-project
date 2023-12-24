@@ -33,7 +33,7 @@ public class SessionRepository : IRepository<ISession, ISession?, bool> {
         });
     }
 
-    public async Task<ISession?> GetData() {
+    public async Task<ISession?> Read() {
         CheckPath();
         return await Task.Run(() => { 
             var json = File.ReadAllText(Path);
@@ -44,7 +44,7 @@ public class SessionRepository : IRepository<ISession, ISession?, bool> {
         });
     }
 
-    public async Task<bool> RemoveAt(bool key) {
+    public async Task<bool> Delete(bool key) {
         CheckPath();
         return await Task.Run(() => {
             try {

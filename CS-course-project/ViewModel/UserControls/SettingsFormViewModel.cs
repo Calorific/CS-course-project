@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.Model.Services.AuthServices;
+using CS_course_project.Model.Services.TimeServices;
 using CS_course_project.model.Storage;
 using CS_course_project.Model.Timetables;
 
@@ -36,32 +37,37 @@ public class ListItem : BaseViewModel {
 }
 
 public partial class SettingsFormViewModel : NotifyErrorsViewModel {
-    private ISettings _settings;
+    private readonly IDataManager? _dataManager;
+    private readonly ITimeConverter? _timeConverter;
+    
+    private ISettings _settings = new Settings();
     
     public ICommand UpdatePasswordCommand => Command.Create(UpdatePassword);
     private async void UpdatePassword(object? sender, EventArgs e) {
+        if (_dataManager == null || _timeConverter == null) return;
         if (_newPassword.Length == 0) {
             AddError(nameof(NewPassword), "Необходимо указать значение");
             return;
         }
         ClearErrors(nameof(NewPassword));
         var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
-            int.Parse(LongBreakDuration), TimeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
+            int.Parse(LongBreakDuration), _timeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
             int.Parse(LessonsNumber), _settings.LongBreakLessons);
         _settings = settings;
-        await DataManager.UpdateSettings(settings);
-        await DataManager.UpdateSession(new Session(true, NewPassword));
+        await _dataManager.UpdateSettings(settings);
+        await _dataManager.UpdateSession(new Session(true, NewPassword));
         NewPassword = string.Empty;
     }
     
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
+
     private async void ChangeSettings(object? sender, EventArgs e) {
-        if (HasErrors) return;
-        
-        try {
+        if (HasErrors || _dataManager == null || _timeConverter == null) return;
+
+    try {
             var settings = new Settings(int.Parse(LessonDuration), int.Parse(BreakDuration), int.Parse(LongBreakDuration),
-                TimeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
-            await DataManager.UpdateSettings(settings);
+                _timeConverter.ParseTime(StartTime), _settings.HashedAdminPassword, int.Parse(LessonsNumber), LongBreaks);
+            await _dataManager.UpdateSettings(settings);
         }
         catch (Exception error) {
             Console.WriteLine(error.Message);
@@ -177,11 +183,12 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     }
 
     private bool IsExceedingTime() {
+        if (_timeConverter == null) return false;
         if (_lessonsNumber == string.Empty || _lessonDuration == string.Empty
               || _longBreakDuration == string.Empty || _breakDuration == string.Empty || _lessonsNumber == string.Empty) {
             return false;
         }
-        var total = TimeConverter.ParseTime(_startTime)
+        var total = _timeConverter.ParseTime(_startTime)
                     + int.Parse(_lessonsNumber) * int.Parse(_lessonDuration)
                     + int.Parse(_longBreakDuration) * LongBreaks.Count
                     + int.Parse(_breakDuration) * (int.Parse(_lessonsNumber) - LongBreaks.Count - 1);
@@ -190,19 +197,23 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
     }
     
     private async void Init() {
-        var settings = await DataManager.LoadSettings();
+        if (_dataManager == null || _timeConverter == null) return;
+        var settings = await _dataManager.GetSettings();
         _settings = settings;
         LessonDuration = settings.LessonDuration.ToString();
         BreakDuration = settings.BreakDuration.ToString();
         LongBreakDuration = settings.LongBreakDuration.ToString();
-        StartTime = TimeConverter.FormatTime(settings.StartTime);
+        StartTime = _timeConverter.FormatTime(settings.StartTime);
         LessonsNumber = settings.LessonsNumber.ToString();
         LessonsArray = Enumerable.Range(0, _settings.LessonsNumber - 1)
             .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
     }
 
-    public SettingsFormViewModel() {
-        _settings = new Settings();
+    public SettingsFormViewModel(IDataManager dataManager, ITimeConverter timeConverter) {
+        _dataManager = dataManager;
+        _timeConverter = timeConverter;
         Init();
     }
+    
+    public SettingsFormViewModel() {}
 }

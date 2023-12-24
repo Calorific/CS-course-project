@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using CS_course_project.Commands;
 using CS_course_project.Model.Services.AuthServices;
+using CS_course_project.Model.Services.TimeServices;
 using CS_course_project.model.Storage;
 using CS_course_project.Model.Timetables;
 using CS_course_project.Navigation;
@@ -36,12 +37,18 @@ public class DayViewModel {
 }
 
 public class TimetablePageViewModel : BaseViewModel {
+    private readonly INavigator? _navigator;
+    private readonly IDataManager? _dataManager;
+    private readonly IAuthService? _authService;
+    private readonly ITimeConverter? _timeConverter;
+    
     private readonly string[] _names = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
     
-    public static ICommand LogOutCommand => Command.Create(LogOut);
-    private static async void LogOut(object? sender, EventArgs e) {
-        await AuthService.LogOut();
-        Navigator.Navigate.Execute("Login", null);
+    public ICommand LogOutCommand => Command.Create(LogOut);
+    private async void LogOut(object? sender, EventArgs e) {
+        if (_authService == null || _navigator == null) return;
+        await _authService.LogOut();
+        _navigator.Navigate.Execute(Pages.Login, null);
     }
 
     private string _title = string.Empty;
@@ -63,6 +70,7 @@ public class TimetablePageViewModel : BaseViewModel {
     }
 
     private void TransformTimetable(ITimetable timetable, IList<ITeacher> teachers, ISettings settings) {
+        if (_timeConverter == null) return;
         var days = new List<DayViewModel>();
         var daysNumber = int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!);
         
@@ -75,8 +83,8 @@ public class TimetablePageViewModel : BaseViewModel {
             var lessons = timetable.Days[i].Lessons;
             for (var k = 0; k < lessons.Count; k++) {
                 if (lessons[k] != null) {
-                    var formattedTime = TimeConverter.FormatTime(time) + "-" +
-                                        TimeConverter.FormatTime(time + settings.LessonDuration);
+                    var formattedTime = _timeConverter.FormatTime(time) + "-" +
+                                        _timeConverter.FormatTime(time + settings.LessonDuration);
                     var teacher = teachers.FirstOrDefault(t => t.Id == lessons[k]!.Teacher);
                    
                     days[i].Lessons.Add(
@@ -98,10 +106,11 @@ public class TimetablePageViewModel : BaseViewModel {
     }
     
     private async void Init() {
-        var session = await DataManager.LoadSession();
-        var timetables = await DataManager.LoadTimetables();
-        var teachers = await DataManager.LoadTeachers();
-        var settings = await DataManager.LoadSettings();
+        if (_dataManager == null) return;
+        var session = await _dataManager.GetSession();
+        var timetables = await _dataManager.GetTimetables();
+        var teachers = await _dataManager.GetTeachers();
+        var settings = await _dataManager.GetSettings();
         
         if (session == null) return;
         
@@ -109,7 +118,13 @@ public class TimetablePageViewModel : BaseViewModel {
         TransformTimetable(timetables[session.Data], teachers, settings);
     }
     
-    public TimetablePageViewModel() {
+    public TimetablePageViewModel(INavigator navigator, IDataManager dataManager, IAuthService authService, ITimeConverter timeConverter) {
+        _navigator = navigator;
+        _dataManager = dataManager;
+        _authService = authService;
+        _timeConverter = timeConverter;
         Init();
     }
+    
+    public TimetablePageViewModel() {}
 }

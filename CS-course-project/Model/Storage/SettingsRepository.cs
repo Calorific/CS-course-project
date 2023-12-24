@@ -34,7 +34,7 @@ public class SettingsRepository : IRepository<ISettings, ISettings, bool> {
         });
     }
 
-    public async Task<ISettings> GetData() {
+    public async Task<ISettings> Read() {
         CheckPath();
         return await Task.Run(() => {
             if (_settings != null) return _settings;
@@ -47,7 +47,7 @@ public class SettingsRepository : IRepository<ISettings, ISettings, bool> {
         });
     }
 
-    public async Task<bool> RemoveAt(bool key) {
+    public async Task<bool> Delete(bool key) {
         CheckPath();
         return await Task.Run(() => {
             try {

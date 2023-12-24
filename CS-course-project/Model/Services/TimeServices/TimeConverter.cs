@@ -1,7 +1,7 @@
-﻿namespace CS_course_project.Model.Timetables; 
+﻿namespace CS_course_project.Model.Services.TimeServices; 
 
-public class TimeConverter {
-    public static int ParseTime(string time) {
+public class TimeConverter : ITimeConverter {
+    public int ParseTime(string time) {
         var parts = time.Split(':');
         var res = 0;
         
@@ -12,7 +12,7 @@ public class TimeConverter {
         return res;
     }
 
-    public static string FormatTime(int time) {
+    public string FormatTime(int time) {
         var minutes = time % 60;
         return (time / 60).ToString() + ':' + (minutes < 10 ? "0" : "") + minutes;
     }

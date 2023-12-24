@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewModel="clr-namespace:CS_course_project.ViewModel"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      xmlns:adminPanelPage="clr-namespace:CS_course_project.UserControls.AdminPanelPage"
       mc:Ignorable="d"
       Title="AdminPanel">
     <Page.DataContext>
@@ -60,8 +59,7 @@
                 </materialDesign:PopupBox>
             </Grid>
             
-            <adminPanelPage:TimetableForm />
-            
+            <UserControl x:Name="TimetableForm" />
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -12,41 +12,43 @@ using CS_course_project.UserControls.SettingsPage;
 namespace CS_course_project.ViewModel;
 
 public class SettingsViewModel : NotifyErrorsViewModel {
+    private readonly INavigator? _navigator;
+    private readonly IDataManager? _dataManager;
     
-    public static ICommand GoBackCommand => Command.Create(GoBack);
-    private static void GoBack(object? sender, EventArgs e) {
-        Navigator.Navigate.Execute("AdminPanel", null);
+    public ICommand GoBackCommand => Command.Create(GoBack);
+    private void GoBack(object? sender, EventArgs e) {
+        _navigator?.Navigate.Execute(Pages.AdminPanel, null);
     }
     
     #region AddCommands
     
     public ICommand AddGroupCommand => Command.Create(AddGroup);
     private async void AddGroup(object? sender, EventArgs e) {
-        if (sender is not string item) return;
+        if (sender is not string item || _dataManager == null) return;
         InsertSort(Groups, item);
-        await DataManager.UpdateGroups(item);
+        await _dataManager.UpdateGroups(item);
     }
     
     public ICommand AddTeacherCommand => Command.Create(AddTeacher);
     private async void AddTeacher(object? sender, EventArgs e) {
-        if (sender is not string name) return;
+        if (sender is not string name || _dataManager == null) return;
         var newTeacher = new Teacher(name);
         InsertTeacher(Teachers, newTeacher);
-        await DataManager.UpdateTeachers(newTeacher);
+        await _dataManager.UpdateTeachers(newTeacher);
     }
     
     public ICommand AddClassroomCommand => Command.Create(AddClassroom);
     private async void AddClassroom(object? sender, EventArgs e) {
-        if (sender is not string item) return;
+        if (sender is not string item || _dataManager == null) return;
         InsertSort(Classrooms, item);
-        await DataManager.UpdateClassrooms(item);
+        await _dataManager.UpdateClassrooms(item);
     }
     
     public ICommand AddSubjectCommand => Command.Create(AddSubject);
     private async void AddSubject(object? sender, EventArgs e) {
-        if (sender is not string item) return;
+        if (sender is not string item || _dataManager == null) return;
         InsertSort(Subjects, item);
-        await DataManager.UpdateSubjects(item);
+        await _dataManager.UpdateSubjects(item);
     }
     
     #endregion
@@ -56,34 +58,34 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     public ICommand RemoveGroupCommand => Command.Create(RemoveGroup);
     private async void RemoveGroup(object? sender, EventArgs e) {
-        if (sender is not string id) return;
+        if (sender is not string id || _dataManager == null) return;
         Groups.Remove(id);
-        await DataManager.RemoveGroup(id);
+        await _dataManager.RemoveGroup(id);
     }
     
     public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
     private async void RemoveTeacher(object? sender, EventArgs e) {
-        if (sender is not string id) return;
+        if (sender is not string id || _dataManager == null) return;
         for (var i = 0; i < Teachers.Count; i++)
             if (Teachers[i].Id == id) {
                 Teachers.RemoveAt(i);
-                await DataManager.RemoveTeacher(id);
+                await _dataManager.RemoveTeacher(id);
                 break;
             }
     }
     
     public ICommand RemoveClassroomCommand => Command.Create(RemoveClassroom);
     private async void RemoveClassroom(object? sender, EventArgs e) {
-        if (sender is not string id) return;
+        if (sender is not string id || _dataManager == null) return;
         Classrooms.Remove(id);
-        await DataManager.RemoveClassroom(id);
+        await _dataManager.RemoveClassroom(id);
     }
     
     public ICommand RemoveSubjectCommand => Command.Create(RemoveSubject);
     private async void RemoveSubject(object? sender, EventArgs e) {
-        if (sender is not string id) return;
+        if (sender is not string id || _dataManager == null) return;
         Subjects.Remove(id);
-        await DataManager.RemoveSubject(id);
+        await _dataManager.RemoveSubject(id);
     }
 
     #endregion
@@ -91,7 +93,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
 
     #region Collections
 
-    private ObservableCollection<string> _groups;
+    private ObservableCollection<string> _groups = new();
 
     public ObservableCollection<Item> GroupItems =>
         new(Groups.Select(group => new Item(group)).OrderBy(s => s.Data.ToLower()));
@@ -105,7 +107,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private ObservableCollection<ITeacher> _teachers;
+    private ObservableCollection<ITeacher> _teachers = new();
     public ObservableCollection<Item> TeacherItems => 
         new(Teachers.Select(teacher => new Item(teacher.Name, teacher.Id)).OrderBy(s => s.Data.ToLower()));
     private ObservableCollection<ITeacher> Teachers {
@@ -117,7 +119,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private ObservableCollection<string> _classrooms;
+    private ObservableCollection<string> _classrooms = new();
     public ObservableCollection<Item> ClassroomItems =>
         new(Classrooms.Select(classroom => new Item(classroom)).OrderBy(s => s.Data.ToLower()));
     public ObservableCollection<string> Classrooms {
@@ -129,7 +131,7 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private ObservableCollection<string> _subjects;
+    private ObservableCollection<string> _subjects = new();
     public ObservableCollection<Item> SubjectItems =>
         new(Subjects.Select(subject => new Item(subject)).OrderBy(s => s.Data.ToLower()));
     public ObservableCollection<string> Subjects {
@@ -163,25 +165,26 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     }
     
     private async void Init() {
-        Groups = new ObservableCollection<string>(await DataManager.LoadGroups());
+        if (_dataManager == null) return;
+        Groups = new ObservableCollection<string>(await _dataManager.GetGroups());
         Groups.CollectionChanged += (_, _) => Notify(nameof(GroupItems));
         
-        Teachers = new ObservableCollection<ITeacher>((await DataManager.LoadTeachers()).OrderBy(s => s.Name.ToLower()));
+        Teachers = new ObservableCollection<ITeacher>((await _dataManager.GetTeachers()).OrderBy(s => s.Name.ToLower()));
         Teachers.CollectionChanged += (_, _) => Notify(nameof(TeacherItems));
         
-        Classrooms = new ObservableCollection<string>(await DataManager.LoadClassrooms());
+        Classrooms = new ObservableCollection<string>(await _dataManager.GetClassrooms());
         Classrooms.CollectionChanged += (_, _) => Notify(nameof(ClassroomItems));
         
-        Subjects = new ObservableCollection<string>(await DataManager.LoadSubjects());
+        Subjects = new ObservableCollection<string>(await _dataManager.GetSubjects());
         Subjects.CollectionChanged += (_, _) => Notify(nameof(SubjectItems));
     }
     
-    public SettingsViewModel() {
-        _groups = new ObservableCollection<string>();
-        _classrooms = new ObservableCollection<string>();
-        _subjects = new ObservableCollection<string>();
-        _teachers = new ObservableCollection<ITeacher>();
+    public SettingsViewModel(INavigator navigator, IDataManager dataManager) {
+        _navigator = navigator;
+        _dataManager = dataManager;
         
         Init();
     }
+
+    public SettingsViewModel() {}
 }

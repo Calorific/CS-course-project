@@ -9,7 +9,7 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Storage; 
 
-public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
+public class TeachersRepository : IRepository<ITeacher, List<ITeacher>, string> {
     private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "teachers.json";
     private List<ITeacher>? _data;
 
@@ -29,7 +29,7 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
     public async Task<bool> Update(ITeacher newItem) {
         return await Task.Run(async () => {
             try {
-                var teachers = await GetData();
+                var teachers = await Read();
                 teachers.Add(newItem);
                 SaveItems(teachers);
                 _data = teachers;
@@ -42,7 +42,7 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
         });
     }
 
-    public async Task<List<ITeacher>> GetData() {
+    public async Task<List<ITeacher>> Read() {
         CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
@@ -55,10 +55,10 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
         });
     }
 
-    public async Task<bool> RemoveAt(string id) {
+    public async Task<bool> Delete(string id) {
         return await Task.Run(async () => {
             try {
-                var teachers = await GetData();
+                var teachers = await Read();
                 var idx = teachers.FindIndex(t => t.Id == id);
                 teachers.RemoveAt(idx);
                 SaveItems(teachers);
@@ -72,7 +72,7 @@ public class TeacherRepository : IRepository<ITeacher, List<ITeacher>, string> {
         });
     }
     
-    public TeacherRepository() {
+    public TeachersRepository() {
         CheckPath();
     }
 }

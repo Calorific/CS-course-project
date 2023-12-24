@@ -4,6 +4,6 @@ namespace CS_course_project.model.Storage;
 
 public interface IRepository<in T, TS, in TR> {
     Task<bool> Update(T newItem);
-    Task<TS> GetData();
-    Task<bool> RemoveAt(TR key);
+    Task<TS> Read();
+    Task<bool> Delete(TR key);
 }

@@ -36,7 +36,7 @@
                 </Button>
             </Grid>
             
-            <settingsPage:SettingsForm />
+            <UserControl x:Name="SettingsForm" />
             
             <Grid Margin="50 10">
                 <Grid.Resources>

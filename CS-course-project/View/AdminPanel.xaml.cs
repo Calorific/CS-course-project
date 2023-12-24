@@ -1,9 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace CS_course_project.View; 
 
-public partial class AdminPanel : Page {
-    public AdminPanel() {
+public partial class AdminPanel {
+    public AdminPanel(IReadOnlyList<UserControl> children) {
         InitializeComponent();
+        TimetableForm.Content = children[0];
     }
 }

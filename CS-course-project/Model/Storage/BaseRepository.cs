@@ -29,7 +29,7 @@ public class BaseRepository : IRepository<string, List<string>, string> {
     public async Task<bool> Update(string newItem) {
         return await Task.Run(async () => {
             try {
-                var groups = await GetData();
+                var groups = await Read();
                 groups.Add(newItem);
                 _data = groups;
                 SaveItems(groups);
@@ -42,7 +42,7 @@ public class BaseRepository : IRepository<string, List<string>, string> {
         });
     }
 
-    public async Task<List<string>> GetData() {
+    public async Task<List<string>> Read() {
         CheckPath();
         return await Task.Run(() => {
             if (_data != null) return _data;
@@ -55,10 +55,10 @@ public class BaseRepository : IRepository<string, List<string>, string> {
         });
     }
 
-    public async Task<bool> RemoveAt(string item) {
+    public async Task<bool> Delete(string item) {
         return await Task.Run(async () => {
             try {
-                var data = await GetData();
+                var data = await Read();
                 var idx = data.FindIndex(v => v == item);
                 if (idx >= 0 && idx < data.Count)
                     data.RemoveAt(idx);

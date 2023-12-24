@@ -5,49 +5,64 @@ using CS_course_project.Model.Timetables;
 
 namespace CS_course_project.model.Storage; 
 
-public static class DataManager {
+public class DataManager : IDataManager {
 
     #region Repositories
 
-    private static BaseRepository GroupRepository { get; } = new(RepositoryItems.Groups);
-    private static BaseRepository ClassroomsRepository { get; } = new(RepositoryItems.Classrooms);
-    private static BaseRepository SubjectsRepository { get; } = new(RepositoryItems.Subjects);
-    
-    private static TeacherRepository TeachersRepository { get; } = new();
-    
-    private static TimetableRepository TimetableRepository { get; } = new();
-    
-    private static SettingsRepository SettingsRepository { get; } = new();
-
-    private static SessionRepository SessionRepository { get; } = new();
+    private readonly IRepository<string, List<string>, string> _groupsRepository;
+    private readonly IRepository<string, List<string>, string> _classroomsRepository;
+    private readonly IRepository<string, List<string>, string> _subjectsRepository;
+    private readonly IRepository<ITeacher, List<ITeacher>, string> _teachersRepository;
+    private readonly IRepository<ITimetable, Dictionary<string, ITimetable>, string> _timetablesRepository;
+    private readonly IRepository<ISettings, ISettings, bool> _settingsRepository;
+    private readonly IRepository<ISession, ISession?, bool> _sessionRepository;
 
     #endregion
 
+    public DataManager(
+        IRepository<string, List<string>, string> groupsRepository,
+        IRepository<string, List<string>, string> classroomsRepository,
+        IRepository<string, List<string>, string> subjectsRepository,
+        IRepository<ITeacher, List<ITeacher>, string> teachersRepository,
+        IRepository<ITimetable, Dictionary<string, ITimetable>, string> timetablesRepository,
+        IRepository<ISettings,ISettings,bool> settingsRepository,
+        IRepository<ISession, ISession?, bool> sessionRepository
+    ) {
+        _groupsRepository = groupsRepository;
+        _classroomsRepository = classroomsRepository;
+        _subjectsRepository = subjectsRepository;
+        _teachersRepository = teachersRepository;
+        _timetablesRepository = timetablesRepository;
+        _settingsRepository = settingsRepository;
+        _sessionRepository = sessionRepository;
+    }
+    
+    
     #region Timetable
 
-    public static async Task<Dictionary<string, ITimetable>> LoadTimetables() => await TimetableRepository.GetData();
-    public static async Task<bool> AddTimetable(ITimetable newItem) => await TimetableRepository.Update(newItem);
-    private static async Task RemoveTimeTable(string key) => await TimetableRepository.RemoveAt(key);
+    public async Task<Dictionary<string, ITimetable>> GetTimetables() => await _timetablesRepository.Read();
+    public async Task<bool> AddTimetable(ITimetable newItem) => await _timetablesRepository.Update(newItem);
+    private async Task RemoveTimeTable(string key) => await _timetablesRepository.Delete(key);
 
     #endregion
     
 
     #region Session
 
-    public static async Task<ISession?> LoadSession() => await SessionRepository.GetData();
-    public static async Task<bool> UpdateSession(ISession newItem) => await SessionRepository.Update(newItem);
-    public static async Task<bool> RemoveSession() => await SessionRepository.RemoveAt(true);
+    public async Task<ISession?> GetSession() => await _sessionRepository.Read();
+    public async Task<bool> UpdateSession(ISession newItem) => await _sessionRepository.Update(newItem);
+    public async Task<bool> RemoveSession() => await _sessionRepository.Delete(true);
 
     #endregion
 
 
     #region Groups
     
-    public static async Task<List<string>> LoadGroups() => await GroupRepository.GetData();
-    public static async Task<bool> UpdateGroups(string newItem) => await GroupRepository.Update(newItem);
-    public static async Task<bool> RemoveGroup(string item) {
+    public async Task<List<string>> GetGroups() => await _groupsRepository.Read();
+    public async Task<bool> UpdateGroups(string newItem) => await _groupsRepository.Update(newItem);
+    public async Task<bool> RemoveGroup(string item) {
         await RemoveTimeTable(item);
-        return await GroupRepository.RemoveAt(item);
+        return await _groupsRepository.Delete(item);
     }
 
     #endregion
@@ -55,37 +70,36 @@ public static class DataManager {
     
     #region Teachers
     
-    public static async Task<List<ITeacher>> LoadTeachers() => await TeachersRepository.GetData();
-    public static async Task<bool> UpdateTeachers(Teacher newItem) => await TeachersRepository.Update(newItem);
-    public static async Task<bool> RemoveTeacher(string id) => await TeachersRepository.RemoveAt(id);
+    public async Task<List<ITeacher>> GetTeachers() => await _teachersRepository.Read();
+    public async Task<bool> UpdateTeachers(Teacher newItem) => await _teachersRepository.Update(newItem);
+    public async Task<bool> RemoveTeacher(string id) => await _teachersRepository.Delete(id);
 
     #endregion
     
     
     #region Classrooms
     
-    public static async Task<List<string>> LoadClassrooms() => await ClassroomsRepository.GetData();
-    public static async Task<bool> UpdateClassrooms(string newItem) => await ClassroomsRepository.Update(newItem);
-    public static async Task<bool> RemoveClassroom(string item) => await ClassroomsRepository.RemoveAt(item);
+    public async Task<List<string>> GetClassrooms() => await _classroomsRepository.Read();
+    public async Task<bool> UpdateClassrooms(string newItem) => await _classroomsRepository.Update(newItem);
+    public async Task<bool> RemoveClassroom(string item) => await _classroomsRepository.Delete(item);
 
     #endregion
     
     
     #region Subjects
     
-    public static async Task<List<string>> LoadSubjects() => await SubjectsRepository.GetData();
-    public static async Task<bool> UpdateSubjects(string newItem) => await SubjectsRepository.Update(newItem);
-    public static async Task<bool> RemoveSubject(string item) => await SubjectsRepository.RemoveAt(item);
+    public async Task<List<string>> GetSubjects() => await _subjectsRepository.Read();
+    public async Task<bool> UpdateSubjects(string newItem) => await _subjectsRepository.Update(newItem);
+    public async Task<bool> RemoveSubject(string item) => await _subjectsRepository.Delete(item);
 
     #endregion
     
 
     #region Settings
 
-    public static async Task<ISettings> LoadSettings() => await SettingsRepository.GetData();
-    public static async Task UpdateSettings(ISettings settings) => await SettingsRepository.Update(settings);
+    public async Task<ISettings> GetSettings() => await _settingsRepository.Read();
+    public async Task UpdateSettings(ISettings settings) => await _settingsRepository.Update(settings);
 
     #endregion
     
-
 }
