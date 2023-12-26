@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using CS_course_project.Model.Timetables;
 
-namespace CS_course_project.model.Timetables; 
+namespace CS_course_project.Model.Timetables; 
 
 public class Timetable : ITimetable {
 

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using CS_course_project.model.Storage;
+using CS_course_project.Model.Storage;
 
 namespace CS_course_project.Model.Services.AuthServices; 
 

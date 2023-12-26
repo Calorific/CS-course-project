@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.Model.Timetables;
 
-namespace CS_course_project.model.Storage; 
+namespace CS_course_project.Model.Storage; 
 
 public interface IDataManager {
     #region Timetable

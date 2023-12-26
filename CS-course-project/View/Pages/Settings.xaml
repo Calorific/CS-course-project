@@ -1,0 +1,94 @@
+﻿<Page x:Class="CS_course_project.View.Pages.Settings"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:pages="clr-namespace:CS_course_project.ViewModel.Pages"
+      xmlns:common="clr-namespace:CS_course_project.View.Components.Common"
+      mc:Ignorable="d"
+      Title="Settings">
+    <Page.DataContext>
+        <pages:SettingsViewModel />
+    </Page.DataContext>
+    <ScrollViewer>
+        <StackPanel Margin="0 0 0 25">
+            <Grid Margin="55 20 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.85*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            
+                <TextBlock Grid.Column="0" Text="Настройки" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="24"
+                           DockPanel.Dock="Left" />
+                <Button
+                    Width="24" Height="24"
+                    Margin="0 0 50 0"
+                    Grid.Column="1"
+                    Command="{Binding GoBackCommand}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    ToolTip="Назад"
+                    Background="Transparent"    
+                    BorderBrush="Transparent"
+                    HorizontalAlignment="Right"
+                    Foreground="Black">
+                    <materialDesign:PackIcon Width="24" Height="24" Kind="ArrowLeft" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+            
+            <UserControl x:Name="SettingsForm" />
+            
+            <Grid Margin="50 10">
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Padding" Value="5,5,5,5" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
+                        <common:EditableList
+                            Items="{Binding GroupItems}"
+                            RemoveCommand="{Binding RemoveGroupCommand}"
+                            AddCommand="{Binding AddGroupCommand}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
+                        <common:EditableList
+                            Items="{Binding TeacherItems}"
+                            RemoveCommand="{Binding RemoveTeacherCommand}"
+                            AddCommand="{Binding AddTeacherCommand}"
+                            IsUnique="False" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
+                        <common:EditableList
+                            Items="{Binding ClassroomItems}"
+                            RemoveCommand="{Binding RemoveClassroomCommand}"
+                            AddCommand="{Binding AddClassroomCommand}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
+                        <common:EditableList
+                            Items="{Binding SubjectItems}"
+                            RemoveCommand="{Binding RemoveSubjectCommand}"
+                            AddCommand="{Binding AddSubjectCommand}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CS_course_project.model.Storage; 
+namespace CS_course_project.Model.Storage; 
 
 public enum RepositoryItems { Groups, Classrooms, Subjects }; 
 

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
-using CS_course_project.model.Timetables;
 using CS_course_project.Model.Timetables;
 using Newtonsoft.Json;
 
-namespace CS_course_project.model.Storage;
+namespace CS_course_project.Model.Storage;
 
 public class AbstractConverter<TReal, TAbstract> 
     : JsonConverter where TReal : TAbstract

@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CS_course_project.Model.Timetables;
 
-namespace CS_course_project.model.Storage; 
+namespace CS_course_project.Model.Storage; 
 
 public class SettingsRepository : IRepository<ISettings, ISettings, bool> {
     private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "settings.json";

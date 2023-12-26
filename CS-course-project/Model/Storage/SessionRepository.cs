@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CS_course_project.Model.Services.AuthServices;
 
-namespace CS_course_project.model.Storage;
+namespace CS_course_project.Model.Storage;
 
 
 public class SessionRepository : IRepository<ISession, ISession?, bool> {
