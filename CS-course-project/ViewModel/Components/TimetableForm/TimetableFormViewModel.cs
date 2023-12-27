@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
-using CS_course_project.Commands;
 using CS_course_project.Model.Storage;
 using CS_course_project.Model.Timetables;
+using CS_course_project.ViewModel.Commands;
 using CS_course_project.ViewModel.Common;
 
 namespace CS_course_project.ViewModel.Components.TimetableForm;

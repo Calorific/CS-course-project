@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace CS_course_project.Commands; 
+namespace CS_course_project.ViewModel.Commands; 
 
 public class Command : ICommand {
     public event EventHandler? CanExecuteChanged;

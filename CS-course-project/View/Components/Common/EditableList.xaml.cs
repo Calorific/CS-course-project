@@ -1,25 +1,9 @@
-﻿
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using CS_course_project.ViewModel.Components.Common;
 
 namespace CS_course_project.View.Components.Common; 
-
-public class Item {
-    public string Data { get; }
-    public string Id { get; }
-
-    public Item(string data) {
-        Data = data;
-        Id = data;
-    }
-
-    public Item(string data, string id) {
-        Data = data;
-        Id = id;
-    }
-}
 
 public partial class EditableList {
     private static void OnItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -29,12 +13,12 @@ public partial class EditableList {
     }
     
     public static readonly DependencyProperty ItemsProperty =
-        DependencyProperty.Register(nameof(Items), typeof(ObservableCollection<Item>), 
+        DependencyProperty.Register(nameof(Items), typeof(ObservableCollection<ListItem>), 
             typeof(EditableList), new FrameworkPropertyMetadata(null,
             OnItemsChanged));
 
-    public ObservableCollection<Item> Items {
-        get => (ObservableCollection<Item>)GetValue(ItemsProperty);
+    public ObservableCollection<ListItem> Items {
+        get => (ObservableCollection<ListItem>)GetValue(ItemsProperty);
         set => SetValue(ItemsProperty, value);
     }
     
@@ -64,14 +48,14 @@ public partial class EditableList {
     
     private void OnLoad(object sender, RoutedEventArgs e) {
         if (Form.DataContext is not EditableListViewModel viewModel) return;
-        viewModel.BaseCommand = AddCommand;
+        viewModel.BaseAddCommand = AddCommand;
+        viewModel.BaseRemoveCommand = RemoveCommand;
         viewModel.Items = Items;
         viewModel.IsUnique = IsUnique;
     }
     
     public EditableList() {
         InitializeComponent();
-        ItemListBox.DataContext = this;
         Loaded += OnLoad;
     }
 }

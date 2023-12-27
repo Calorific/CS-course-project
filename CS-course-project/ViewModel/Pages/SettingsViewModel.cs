@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using CS_course_project.Commands;
 using CS_course_project.Model.Storage;
 using CS_course_project.Model.Timetables;
-using CS_course_project.View.Components.Common;
+using CS_course_project.ViewModel.Commands;
 using CS_course_project.ViewModel.Common;
+using CS_course_project.ViewModel.Components.Common;
 
 namespace CS_course_project.ViewModel.Pages;
 
@@ -58,34 +58,70 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     public ICommand RemoveGroupCommand => Command.Create(RemoveGroup);
     private async void RemoveGroup(object? sender, EventArgs e) {
-        if (sender is not string id || _dataManager == null) return;
-        Groups.Remove(id);
+        if (sender is not string id || _dataManager == null) 
+            return;
+        
+        Groups.Remove(Groups.First(g => g.Id == id));
         await _dataManager.RemoveGroup(id);
     }
     
     public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
     private async void RemoveTeacher(object? sender, EventArgs e) {
-        if (sender is not string id || _dataManager == null) return;
+        if (sender is not string id || _dataManager == null) 
+            return;
+        
+        foreach (var listItem in Teachers) {
+            listItem.Error = null;
+        }
+        
         for (var i = 0; i < Teachers.Count; i++)
             if (Teachers[i].Id == id) {
-                Teachers.RemoveAt(i);
-                await _dataManager.RemoveTeacher(id);
+                try {
+                    await _dataManager.RemoveTeacher(id);
+                    Teachers.RemoveAt(i);
+                }
+                catch (ArgumentException exception) {
+                    Teachers[i].Error = exception.Message;
+                }
+                
                 break;
             }
     }
     
     public ICommand RemoveClassroomCommand => Command.Create(RemoveClassroom);
     private async void RemoveClassroom(object? sender, EventArgs e) {
-        if (sender is not string id || _dataManager == null) return;
-        Classrooms.Remove(id);
-        await _dataManager.RemoveClassroom(id);
+        if (sender is not string id || _dataManager == null)
+            return;
+        
+        foreach (var listItem in Classrooms) {
+            listItem.Error = null;
+        }
+
+        try {
+            await _dataManager.RemoveClassroom(id);
+            Classrooms.Remove(Classrooms.First(c => c.Id == id));
+        }
+        catch (ArgumentException exception) {
+            Classrooms.First(c => c.Id == id).Error = exception.Message;
+        }
     }
     
     public ICommand RemoveSubjectCommand => Command.Create(RemoveSubject);
     private async void RemoveSubject(object? sender, EventArgs e) {
-        if (sender is not string id || _dataManager == null) return;
-        Subjects.Remove(id);
-        await _dataManager.RemoveSubject(id);
+        if (sender is not string id || _dataManager == null) 
+            return;
+        
+        foreach (var listItem in Subjects) {
+            listItem.Error = null;
+        }
+
+        try {
+            await _dataManager.RemoveSubject(id);
+            Subjects.Remove(Subjects.First(c => c.Id == id));
+        }
+        catch (ArgumentException exception) {
+            Subjects.First(s => s.Id == id).Error = exception.Message;
+        } 
     }
 
     #endregion
@@ -93,71 +129,62 @@ public class SettingsViewModel : NotifyErrorsViewModel {
 
     #region Collections
 
-    private ObservableCollection<string> _groups = new();
-
-    public ObservableCollection<Item> GroupItems =>
-        new(Groups.Select(group => new Item(group)).OrderBy(s => s.Data.ToLower()));
-    public ObservableCollection<string> Groups {
+    private ObservableCollection<ListItem> _groups = new();   
+    public ObservableCollection<ListItem> Groups {
         
         get => _groups; 
         set {
             if (_groups == value) return;
             _groups = value;
-            NotifyAll(nameof(Groups), nameof(GroupItems));
+            Notify();
         }
     }
     
-    private ObservableCollection<ITeacher> _teachers = new();
-    public ObservableCollection<Item> TeacherItems => 
-        new(Teachers.Select(teacher => new Item(teacher.Name, teacher.Id)).OrderBy(s => s.Data.ToLower()));
-    private ObservableCollection<ITeacher> Teachers {
+    private ObservableCollection<ListItem> _teachers = new();
+    public ObservableCollection<ListItem> Teachers {
         get => _teachers; 
         set {
             if (_teachers == value) return;
             _teachers = value;
-            NotifyAll(nameof(Teachers), nameof(TeacherItems));
+            Notify();
         }
     }
     
-    private ObservableCollection<string> _classrooms = new();
-    public ObservableCollection<Item> ClassroomItems =>
-        new(Classrooms.Select(classroom => new Item(classroom)).OrderBy(s => s.Data.ToLower()));
-    public ObservableCollection<string> Classrooms {
+    private ObservableCollection<ListItem> _classrooms = new();
+    public ObservableCollection<ListItem> Classrooms {
         get => _classrooms; 
         set {
             if (_classrooms == value) return;
             _classrooms = value;
-            NotifyAll(nameof(Classrooms), nameof(ClassroomItems));
+            Notify();
         }
     }
     
-    private ObservableCollection<string> _subjects = new();
-    public ObservableCollection<Item> SubjectItems =>
-        new(Subjects.Select(subject => new Item(subject)).OrderBy(s => s.Data.ToLower()));
-    public ObservableCollection<string> Subjects {
+    private ObservableCollection<ListItem> _subjects = new();
+    public ObservableCollection<ListItem> Subjects {
         get => _subjects; 
         set {
             if (_subjects == value) return;
             _subjects = value;
-            NotifyAll(nameof(Subjects), nameof(SubjectItems));
+            Notify();
         }
     }
 
     #endregion
-    
 
-    private static void InsertSort(IList<string> collection, string newItem) {
+    private static void InsertSort(IList<ListItem> collection, string newItem) {
         for (var i = 0; i < collection.Count; i++) {
-            if (string.Compare(collection[i], newItem, StringComparison.OrdinalIgnoreCase) <= 0) continue;
-            collection.Insert(i, newItem);
+            if (string.Compare(collection[i].Data, newItem, StringComparison.OrdinalIgnoreCase) <= 0) continue;
+            collection.Insert(i, new ListItem(newItem));
             return;
         }
-        collection.Add(newItem);
+        collection.Add(new ListItem(newItem));
     }
     
-    private static void InsertTeacher(IList<ITeacher> collection, ITeacher newItem) {
+    private static void InsertTeacher(IList<ListItem> collection, ITeacher newTeacher) {
+        var newItem = new ListItem(newTeacher.Name, newTeacher.Id);
         for (var i = 0; i < collection.Count; i++) {
-            if (string.Compare(collection[i].Name, newItem.Name, StringComparison.CurrentCultureIgnoreCase) <= 0) continue;
+            if (string.Compare(collection[i].Data, newItem.Data, StringComparison.CurrentCultureIgnoreCase) <= 0) continue;
             collection.Insert(i, newItem);
             return;
         }
@@ -166,17 +193,21 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     
     private async void Init() {
         if (_dataManager == null) return;
-        Groups = new ObservableCollection<string>(await _dataManager.GetGroups());
-        Groups.CollectionChanged += (_, _) => Notify(nameof(GroupItems));
+        var groups = (await _dataManager.GetGroups()).OrderBy(g => g.ToLower());
+        Groups = new ObservableCollection<ListItem>(groups.Select(group => new ListItem(group)));
+        Groups.CollectionChanged += (_, _) => Notify(nameof(Groups));
         
-        Teachers = new ObservableCollection<ITeacher>((await _dataManager.GetTeachers()).OrderBy(s => s.Name.ToLower()));
-        Teachers.CollectionChanged += (_, _) => Notify(nameof(TeacherItems));
+        var teachers = (await _dataManager.GetTeachers()).OrderBy(t => t.Name.ToLower());
+        Teachers = new ObservableCollection<ListItem>(teachers.Select(teacher => new ListItem(teacher.Name, teacher.Id)));
+        Teachers.CollectionChanged += (_, _) => Notify(nameof(Teachers));
         
-        Classrooms = new ObservableCollection<string>(await _dataManager.GetClassrooms());
-        Classrooms.CollectionChanged += (_, _) => Notify(nameof(ClassroomItems));
+        var classrooms = (await _dataManager.GetClassrooms()).OrderBy(t => t.ToLower());
+        Classrooms = new ObservableCollection<ListItem>(classrooms.Select(classroom => new ListItem(classroom)));
+        Classrooms.CollectionChanged += (_, _) => Notify(nameof(Classrooms));
         
-        Subjects = new ObservableCollection<string>(await _dataManager.GetSubjects());
-        Subjects.CollectionChanged += (_, _) => Notify(nameof(SubjectItems));
+        var subjects = (await _dataManager.GetSubjects()).OrderBy(t => t.ToLower());
+        Subjects = new ObservableCollection<ListItem>(subjects.Select(subject => new ListItem(subject)));
+        Subjects.CollectionChanged += (_, _) => Notify(nameof(Subjects));
     }
     
     public SettingsViewModel(INavigator navigator, IDataManager dataManager) {

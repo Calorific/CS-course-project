@@ -55,7 +55,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Группы" />
                         <common:EditableList
-                            Items="{Binding GroupItems}"
+                            Items="{Binding Groups}"
                             RemoveCommand="{Binding RemoveGroupCommand}"
                             AddCommand="{Binding AddGroupCommand}" />
                     </StackPanel>
@@ -64,7 +64,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
                         <common:EditableList
-                            Items="{Binding TeacherItems}"
+                            Items="{Binding Teachers}"
                             RemoveCommand="{Binding RemoveTeacherCommand}"
                             AddCommand="{Binding AddTeacherCommand}"
                             IsUnique="False" />
@@ -74,7 +74,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Аудитории" />
                         <common:EditableList
-                            Items="{Binding ClassroomItems}"
+                            Items="{Binding Classrooms}"
                             RemoveCommand="{Binding RemoveClassroomCommand}"
                             AddCommand="{Binding AddClassroomCommand}" />
                     </StackPanel>
@@ -83,7 +83,7 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Предметы" />
                         <common:EditableList
-                            Items="{Binding SubjectItems}"
+                            Items="{Binding Subjects}"
                             RemoveCommand="{Binding RemoveSubjectCommand}"
                             AddCommand="{Binding AddSubjectCommand}" />
                     </StackPanel>

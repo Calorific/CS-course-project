@@ -118,7 +118,12 @@ public class DataManager : IDataManager {
             throw new ArgumentException("Учитель уже существует");
         return await _teachersRepository.Update(newTeacher);
     }
-    public async Task<bool> RemoveTeacher(string id) => await _teachersRepository.Delete(id);
+    public async Task<bool> RemoveTeacher(string id) {
+        var group = await GetUsingGroup("Teacher", id);
+        if (group != null)
+            throw new ArgumentException("Преподаватель в расписании " + group);
+        return await _teachersRepository.Delete(id);
+    }
 
     #endregion
     
@@ -132,7 +137,12 @@ public class DataManager : IDataManager {
             throw new ArgumentException("Аудитория уже существует");
         return await _classroomsRepository.Update(newClassroom);
     }
-    public async Task<bool> RemoveClassroom(string item) => await _classroomsRepository.Delete(item);
+    public async Task<bool> RemoveClassroom(string id) {
+        var group = await GetUsingGroup("Classroom", id);
+        if (group != null)
+            throw new ArgumentException("Аудитория в расписании " + group);
+        return await _classroomsRepository.Delete(id);
+    }
 
     #endregion
     
@@ -146,7 +156,12 @@ public class DataManager : IDataManager {
             throw new ArgumentException("Предмет уже существует");
         return await _subjectsRepository.Update(newSubject);
     }
-    public async Task<bool> RemoveSubject(string item) => await _subjectsRepository.Delete(item);
+    public async Task<bool> RemoveSubject(string id) {
+        var group = await GetUsingGroup("Subject", id);
+        if (group != null)
+            throw new ArgumentException("Предмет в расписании " + group);
+        return await _subjectsRepository.Delete(id);
+    }
 
     #endregion
     
@@ -158,4 +173,24 @@ public class DataManager : IDataManager {
 
     #endregion
     
+    
+    private async Task<string?> GetUsingGroup(string field, string value) {
+        var timetables = await GetTimetables();
+        
+        foreach (var group in timetables.Keys) {
+            foreach (var day in timetables[group].Days) {
+                foreach (var lesson in day.Lessons) {
+                    if (lesson == null) continue;
+                    switch (field) {
+                        case "Teacher" when lesson.Teacher == value:
+                        case "Classroom" when lesson.Classroom == value:
+                        case "Subject" when lesson.Subject == value:
+                            return group;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }

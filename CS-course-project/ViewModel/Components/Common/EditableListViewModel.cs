@@ -1,21 +1,59 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
-using CS_course_project.Commands;
-using CS_course_project.View.Components.Common;
+using CS_course_project.ViewModel.Commands;
 using CS_course_project.ViewModel.Common;
 
 namespace CS_course_project.ViewModel.Components.Common; 
 
-public class EditableListViewModel : NotifyErrorsViewModel {
-    
-    public ObservableCollection<Item>? Items;
+public class ListItem : NotifyErrorsViewModel {
+    public string Data { get; }
+    public string Id { get; }
 
-    public ICommand? BaseCommand { get; set; }
+    public Visibility ErrorVisibility { get; set; } = Visibility.Collapsed;
     
-    public bool IsUnique { get; set; }
+    private string? _error;
+    public string? Error {
+        get => _error;
+        set {
+            _error = value;
+            ErrorVisibility = !string.IsNullOrEmpty(value) ? Visibility.Visible : Visibility.Collapsed;
+            NotifyAll(nameof(Error), nameof(ErrorVisibility));
+        }
+    }
+
+    public ListItem(string data) {
+        Data = data;
+        Id = data;
+    }
+
+    public ListItem(string data, string id) {
+        Data = data;
+        Id = id;
+    }
+}
+
+public class EditableListViewModel : NotifyErrorsViewModel {
+
+    private ObservableCollection<ListItem>? _items;
+    public ObservableCollection<ListItem>? Items {
+        get => _items;
+        set {
+            _items = value;
+            Notify();
+        }
+    }
     
+    public ICommand? BaseRemoveCommand { get; set; }
+    public ICommand RemoveItemCommand => Command.Create(RemoveItem);
+    private void RemoveItem(object? sender, EventArgs e) {
+        BaseRemoveCommand?.Execute(sender);
+        Notify(nameof(Items));
+    }
+    
+    public ICommand? BaseAddCommand { get; set; }
     public ICommand AddItemCommand => Command.Create(AddItem);
     private void AddItem(object? sender, EventArgs e) {
         if (Items == null) return;
@@ -28,10 +66,12 @@ public class EditableListViewModel : NotifyErrorsViewModel {
             return;
         }
         ClearErrors(nameof(NewItem));
-        BaseCommand?.Execute(_newItem);
+        BaseAddCommand?.Execute(_newItem);
         NewItem = string.Empty;
         Notify(nameof(NewItem));
     }
+    
+    public bool IsUnique { get; set; }
     
     private string _newItem = string.Empty;
     public string NewItem {

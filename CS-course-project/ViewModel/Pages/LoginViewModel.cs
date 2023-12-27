@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CS_course_project.Commands;
 using CS_course_project.Model.Services.AuthServices;
 using CS_course_project.Model.Storage;
+using CS_course_project.ViewModel.Commands;
 using CS_course_project.ViewModel.Common;
 
 namespace CS_course_project.ViewModel.Pages; 

@@ -6,19 +6,17 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:common="clr-namespace:CS_course_project.ViewModel.Components.Common"
-             xmlns:common1="clr-namespace:CS_course_project.View.Components.Common"
              xmlns:behaviours="clr-namespace:CS_course_project.View.Behaviours"
-             d:DataContext="{d:DesignInstance common1:EditableList, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
-    <Grid>
+    <Grid x:Name="Form">
+        <Grid.DataContext>
+            <common:EditableListViewModel />
+        </Grid.DataContext>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" x:Name="Form" Margin="0 7">
-            <StackPanel.DataContext>
-                <common:EditableListViewModel />
-            </StackPanel.DataContext>
+        <StackPanel Grid.Row="0" Margin="0 7">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.85*"></ColumnDefinition>
@@ -47,9 +45,9 @@
                     <materialDesign:PackIcon Width="20" Height="20" Kind="PlusCircleOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
             </Grid>
-            
         </StackPanel>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch" x:Name="ItemListBox">
+        
+        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>
@@ -58,18 +56,22 @@
                                 <ColumnDefinition Width="0.9*"></ColumnDefinition>
                                 <ColumnDefinition Width="0.1*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
                             <TextBlock
-                                Grid.Column="0"
+                                Grid.Row="0" Grid.Column="0"
                                 TextWrapping="Wrap"
                                 DockPanel.Dock="Left"
-                                Text="{Binding Data}"
+                                Text="{Binding Data, NotifyOnValidationError=True}"
                                 ToolTip="{Binding Id}"
                                 Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
                                 Margin="5 0"
                                 HorizontalAlignment="Left" />
                             <Button
-                                Grid.Column="1"
-                                Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                Grid.Row="0" Grid.Column="1"
+                                Command="{Binding DataContext.RemoveItemCommand, ElementName=Form}"
                                 Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                                 ToolTip="Удалить" Width="15" Height="15"
                                 CommandParameter="{Binding Id}"
@@ -80,6 +82,8 @@
                                 Foreground="Black">
                                 <materialDesign:PackIcon Width="15" Height="15" Kind="CloseThick" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Button>
+                            <TextBlock Grid.Row="1" Grid.Column="0"  Margin="5 5 0 0" Foreground="Firebrick" FontSize="12" TextWrapping="Wrap"
+                                       Text="{Binding Error}" Visibility="{Binding ErrorVisibility}" />
                         </Grid>
                     </DockPanel>
                 </DataTemplate>
