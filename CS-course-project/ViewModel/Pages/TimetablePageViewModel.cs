@@ -75,11 +75,13 @@ public class TimetablePageViewModel : BaseViewModel {
         var daysNumber = int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!);
         
         for (var i = 0; i < daysNumber; i++) {
-            if (i > timetable.Days.Count)
-                break;
+            days.Add(new DayViewModel(_names[i % _names.Length]));
+            
+            if (i >= timetable.Days.Count) {
+                continue;
+            }
 
             var time = settings.StartTime;
-            days.Add(new DayViewModel(_names[i % _names.Length]));
             var lessons = timetable.Days[i].Lessons;
             for (var k = 0; k < lessons.Count; k++) {
                 if (lessons[k] != null) {
