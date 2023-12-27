@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace CS_course_project.Model.Timetables; 
 
 public class Settings : ISettings {
-    public string HashedAdminPassword { get; } = BCrypt.Net.BCrypt.HashPassword("123");
+    public string HashedAdminPassword { get; } = BCrypt.Net.BCrypt.HashPassword(ConfigurationManager.AppSettings["DefaultHashedAdminPassword"]!);
 
-    private readonly int _lessonDuration = 40;
+    private readonly int _lessonDuration = int.Parse(ConfigurationManager.AppSettings["DefaultLessonDuration"]!);
     public int LessonDuration {
         get => _lessonDuration;
         private init {
@@ -17,7 +18,7 @@ public class Settings : ISettings {
             _lessonDuration = value;
         }}
     
-    private readonly int _breakDuration = 10;
+    private readonly int _breakDuration = int.Parse(ConfigurationManager.AppSettings["DefaultBreakDuration"]!);
     public int BreakDuration {
         get => _breakDuration;
         private init {
@@ -26,7 +27,7 @@ public class Settings : ISettings {
             _breakDuration = value;
         }}
     
-    private readonly int _longBreakDuration = 10;
+    private readonly int _longBreakDuration = int.Parse(ConfigurationManager.AppSettings["DefaultLongBreakDuration"]!);
     public int LongBreakDuration {
         get => _longBreakDuration;
         private init {
@@ -35,7 +36,7 @@ public class Settings : ISettings {
             _longBreakDuration = value;
         }}
     
-    private readonly int _startTime = 480;
+    private readonly int _startTime = int.Parse(ConfigurationManager.AppSettings["DefaultStartTime"]!);
     public int StartTime {
         get => _startTime;
         private init {
@@ -45,7 +46,7 @@ public class Settings : ISettings {
         }
     }
     
-    private readonly int _lessonsNumber = 14;
+    private readonly int _lessonsNumber = int.Parse(ConfigurationManager.AppSettings["DefaultLessonsNumber"]!);
     public int LessonsNumber {
         get => _lessonsNumber;
         private init {
