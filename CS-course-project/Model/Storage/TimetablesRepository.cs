@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace CS_course_project.Model.Storage;
 
 public class AbstractConverter<TReal, TAbstract> 
-    : JsonConverter where TReal : TAbstract
+    : JsonConverter where TReal : TAbstract 
 {
     public override bool CanConvert(Type objectType)
         => objectType == typeof(TAbstract);
@@ -31,12 +31,12 @@ public class TimetablesRepository : IRepository<ITimetable, Dictionary<string, I
         },
     };
     
-    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "timetables.json";
+    private static readonly string Path = (ConfigurationManager.AppSettings["StoragePath"] ?? "./data/") + "timetables.json";
     private Dictionary<string, ITimetable>? _data;
     
     private static void CheckPath() {
-        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
-            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/"))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/");
         if (!File.Exists(Path)) 
             File.Create(Path).Dispose();
     }

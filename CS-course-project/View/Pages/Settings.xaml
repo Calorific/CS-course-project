@@ -38,6 +38,9 @@
             
             <UserControl x:Name="SettingsForm" />
             
+            <TextBlock Text="{Binding Error}" Visibility="{Binding ErrorVisibility}"
+                       Foreground="Firebrick" FontSize="14"/>
+            
             <Grid Margin="50 10">
                 <Grid.Resources>
                     <Style TargetType="Border">
@@ -62,7 +65,7 @@
                 </Border>
                 <Border Grid.Column="1">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Учителя" />
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Преподаватели" />
                         <common:EditableList
                             Items="{Binding Teachers}"
                             RemoveCommand="{Binding RemoveTeacherCommand}"

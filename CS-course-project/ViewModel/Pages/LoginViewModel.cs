@@ -20,6 +20,10 @@ public class LoginViewModel : NotifyErrorsViewModel {
 
     private async Task LogInAdmin() {
         if (_authService == null || _navigator == null) return;
+        if (string.IsNullOrEmpty(Password)) {
+            AddError(nameof(Password), "Нужно ввести пароль");
+            return;
+        }
         var error = await _authService.LogIn(Password, true);
         
         if (error == "WRONG_PASSWORD")
@@ -29,6 +33,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
         else
             _navigator.Navigate(Routes.AdminPanel);
     }
+    
     private async Task LogInUser() {
         if (_authService == null || _navigator == null) return;
         var error = await _authService.LogIn(Group, false);
@@ -40,6 +45,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
         else
             _navigator.Navigate(Routes.Timetable);
     }
+    
     private async void LogIn(object? sender, EventArgs e) {
         if (IsAdmin)
             await LogInAdmin();
@@ -68,7 +74,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
             _isAdmin = value;
             PasswordVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             GroupVisibility = !value ? Visibility.Visible : Visibility.Collapsed;
-            Group = ""; Password = ""; CanSubmit = false;
+            Group = ""; Password = "";
             NotifyAll(nameof(IsAdmin), nameof(GroupVisibility), nameof(PasswordVisibility));
         }
     }
@@ -79,13 +85,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
         set {
             _password = value;
             ClearErrors(nameof(Password));
-            if (_firstRender)
-                _firstRender = false;
-            else if (IsAdmin && _password.Length == 0) 
-                AddError(nameof(Password), "Нужно ввести пароль");
-            else 
-                CanSubmit = true;
-            
+            CanSubmit = true;
             Notify();
         }
     }
@@ -106,7 +106,7 @@ public class LoginViewModel : NotifyErrorsViewModel {
         }
     }
 
-    private bool _canSubmit;
+    private bool _canSubmit = true;
     public bool CanSubmit {
         get => _canSubmit;
         set {

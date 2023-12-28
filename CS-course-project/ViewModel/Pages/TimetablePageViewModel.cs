@@ -72,18 +72,21 @@ public class TimetablePageViewModel : BaseViewModel {
     private void TransformTimetable(ITimetable timetable, IList<ITeacher> teachers, ISettings settings) {
         if (_timeConverter == null) return;
         var days = new List<DayViewModel>();
-        var daysNumber = int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!);
+        var daysNumber = int.Parse(ConfigurationManager.AppSettings["NumberOfDays"] ?? "6");
         
         for (var i = 0; i < daysNumber; i++) {
             days.Add(new DayViewModel(_names[i % _names.Length]));
             
             if (i >= timetable.Days.Count) {
-                continue;
+                break;
             }
 
             var time = settings.StartTime;
             var lessons = timetable.Days[i].Lessons;
-            for (var k = 0; k < lessons.Count; k++) {
+            for (var k = 0; k < settings.LessonsNumber; k++) {
+                if (k >= lessons.Count)
+                    break;
+                
                 if (lessons[k] != null) {
                     var formattedTime = _timeConverter.FormatTime(time) + "-" +
                                         _timeConverter.FormatTime(time + settings.LessonDuration);

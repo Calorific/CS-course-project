@@ -10,19 +10,19 @@ using CS_course_project.Model.Timetables;
 namespace CS_course_project.Model.Storage; 
 
 public class TeachersRepository : IRepository<ITeacher, List<ITeacher>, string> {
-    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "teachers.json";
+    private static readonly string Path = (ConfigurationManager.AppSettings["StoragePath"] ?? "./data/") + "teachers.json";
     private List<ITeacher>? _data;
 
     private static void CheckPath() {
-        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
-            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/"))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/");
         if (!File.Exists(Path)) 
             File.Create(Path).Dispose();
     }
     
-    private static void SaveItems(List<ITeacher> groups) {
+    private static void SaveItems(List<ITeacher> teachers) {
         CheckPath();
-        var json = JsonSerializer.Serialize(groups);
+        var json = JsonSerializer.Serialize(teachers);
         File.WriteAllText(Path, json);
     }
     

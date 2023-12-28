@@ -7,7 +7,7 @@ public class Session : ISession {
     public string Data { get; }
 
     public Session(bool isAdmin, string data) {
-        if (data == string.Empty)
+        if (string.IsNullOrEmpty(data))
             throw new ArgumentException("Данные сессии не могут быть пустыми");
         IsAdmin = isAdmin;
         Data = data;

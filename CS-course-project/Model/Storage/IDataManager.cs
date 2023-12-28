@@ -35,7 +35,7 @@ public interface IDataManager {
     #region Teachers
     
     public Task<List<ITeacher>> GetTeachers();
-    public Task<bool> UpdateTeachers(Teacher newItem);
+    public Task<bool> UpdateTeachers(ITeacher newItem);
     public Task<bool> RemoveTeacher(string id);
 
     #endregion

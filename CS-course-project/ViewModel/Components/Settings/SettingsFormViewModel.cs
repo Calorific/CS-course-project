@@ -12,7 +12,7 @@ using CS_course_project.ViewModel.Common;
 
 namespace CS_course_project.ViewModel.Components.Settings;
 
-public class ListItem : BaseViewModel {
+public class Item : BaseViewModel {
     private readonly string _data = string.Empty;
     public string Data {
         get => _data;
@@ -31,7 +31,7 @@ public class ListItem : BaseViewModel {
         }
     }
 
-    public ListItem(string data, bool isSelected) {
+    public Item(string data, bool isSelected) {
         Data = data;
         IsSelected = isSelected;
     }
@@ -52,13 +52,19 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         }
         ClearErrors(nameof(NewPassword));
         
-        var settings = new Model.Timetables.Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
-            int.Parse(LongBreakDuration), _timeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
-            int.Parse(LessonsNumber), _settings.LongBreakLessons);
-        _settings = settings;
-        await _dataManager.UpdateSettings(settings);
-        await _dataManager.UpdateSession(new Session(true, NewPassword));
-        NewPassword = string.Empty;
+        try {
+            var settings = new Model.Timetables.Settings(int.Parse(LessonDuration), int.Parse(BreakDuration),
+                        int.Parse(LongBreakDuration), _timeConverter.ParseTime(StartTime), BCrypt.Net.BCrypt.HashPassword(NewPassword),
+                        int.Parse(LessonsNumber), _settings.LongBreakLessons);
+            _settings = settings;
+            await _dataManager.UpdateSettings(settings);
+            await _dataManager.UpdateSession(new Session(true, NewPassword));
+            NewPassword = string.Empty;
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            AddError(nameof(NewPassword), exception.Message);
+        }
     }
     
     public ICommand SubmitCommand => Command.Create(ChangeSettings);
@@ -72,11 +78,11 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
                 LongBreaks.Where(l => l < int.Parse(LessonsNumber) - 1).ToList());
             await _dataManager.UpdateSettings(settings);
             LessonsArray = Enumerable.Range(0, settings.LessonsNumber - 1)
-                .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
+                .Select(idx => new Item((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
         }
-        catch (Exception error) {
-            Console.WriteLine(error.Message);
-            AddError(nameof(StartTime), "Некорректное значение");
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            AddError(nameof(StartTime), exception.Message);
         }
     }
 
@@ -176,9 +182,9 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         }
     }
     
-    private List<ListItem> _lessonsArray = new();
+    private List<Item> _lessonsArray = new();
     private List<int> LongBreaks => (from item in LessonsArray where item.IsSelected select int.Parse(item.Data) - 1).ToList();
-    public List<ListItem> LessonsArray {
+    public List<Item> LessonsArray {
         get => _lessonsArray;
         private set {
             _lessonsArray = value;
@@ -210,7 +216,7 @@ public partial class SettingsFormViewModel : NotifyErrorsViewModel {
         StartTime = _timeConverter.FormatTime(settings.StartTime);
         LessonsNumber = settings.LessonsNumber.ToString();
         LessonsArray = Enumerable.Range(0, _settings.LessonsNumber - 1)
-            .Select(idx => new ListItem((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
+            .Select(idx => new Item((idx + 1).ToString(), settings.LongBreakLessons.Contains(idx))).ToList();
     }
 
     public SettingsFormViewModel(IDataManager dataManager, ITimeConverter timeConverter) {

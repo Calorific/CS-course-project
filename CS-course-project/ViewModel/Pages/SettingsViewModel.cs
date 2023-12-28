@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using CS_course_project.Model.Storage;
 using CS_course_project.Model.Timetables;
@@ -26,7 +27,15 @@ public class SettingsViewModel : NotifyErrorsViewModel {
     private async void AddGroup(object? sender, EventArgs e) {
         if (sender is not string item || _dataManager == null) return;
         InsertSort(Groups, item);
-        await _dataManager.UpdateGroups(item);
+        
+        try {
+            await _dataManager.UpdateGroups(item);
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            Error = exception.Message;
+        }
+        
     }
     
     public ICommand AddTeacherCommand => Command.Create(AddTeacher);
@@ -34,21 +43,42 @@ public class SettingsViewModel : NotifyErrorsViewModel {
         if (sender is not string name || _dataManager == null) return;
         var newTeacher = new Teacher(name);
         InsertTeacher(Teachers, newTeacher);
-        await _dataManager.UpdateTeachers(newTeacher);
+        
+        try {
+            await _dataManager.UpdateTeachers(newTeacher);
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            Error = exception.Message;
+        }
     }
     
     public ICommand AddClassroomCommand => Command.Create(AddClassroom);
     private async void AddClassroom(object? sender, EventArgs e) {
         if (sender is not string item || _dataManager == null) return;
         InsertSort(Classrooms, item);
-        await _dataManager.UpdateClassrooms(item);
+        
+        try {
+            await _dataManager.UpdateClassrooms(item);
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            Error = exception.Message;
+        }
     }
     
     public ICommand AddSubjectCommand => Command.Create(AddSubject);
     private async void AddSubject(object? sender, EventArgs e) {
         if (sender is not string item || _dataManager == null) return;
         InsertSort(Subjects, item);
-        await _dataManager.UpdateSubjects(item);
+        
+        try {
+            await _dataManager.UpdateSubjects(item);
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            Error = exception.Message;
+        }
     }
     
     #endregion
@@ -62,7 +92,14 @@ public class SettingsViewModel : NotifyErrorsViewModel {
             return;
         
         Groups.Remove(Groups.First(g => g.Id == id));
-        await _dataManager.RemoveGroup(id);
+        
+        try {
+            await _dataManager.RemoveGroup(id);
+        }
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            Error = exception.Message;
+        }
     }
     
     public ICommand RemoveTeacherCommand => Command.Create(RemoveTeacher);
@@ -172,6 +209,17 @@ public class SettingsViewModel : NotifyErrorsViewModel {
 
     #endregion
 
+    public Visibility ErrorVisibility { get; set; } = Visibility.Collapsed;
+    private string _error = string.Empty;
+    public string Error {
+        get => _error;
+        set {
+            _error = value;
+            ErrorVisibility = string.IsNullOrEmpty(_error) ? Visibility.Collapsed : Visibility.Visible;
+            NotifyAll(nameof(Error), nameof(ErrorVisibility));
+        }
+    }
+    
     private static void InsertSort(IList<ListItem> collection, string newItem) {
         for (var i = 0; i < collection.Count; i++) {
             if (string.Compare(collection[i].Data, newItem, StringComparison.OrdinalIgnoreCase) <= 0) continue;

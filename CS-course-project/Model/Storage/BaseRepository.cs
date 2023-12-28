@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace CS_course_project.Model.Storage; 
 
-public enum RepositoryItems { Groups, Classrooms, Subjects }; 
+public enum RepositoryItems { Groups, Classrooms, Subjects }
 
 public class BaseRepository : IRepository<string, List<string>, string> {
-    private readonly string _path = ConfigurationManager.AppSettings["StoragePath"]!;
+    private readonly string _path = ConfigurationManager.AppSettings["StoragePath"] ?? "./data/";
     private List<string>? _data;
 
     private void CheckPath() {
-        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
-            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/"))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/");
         if (!File.Exists(_path)) 
             File.Create(_path).Dispose();
     }

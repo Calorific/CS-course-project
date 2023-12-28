@@ -1,0 +1,29 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bcfd55a5_002Dae73_002D445b_002Daf0a_002D13ecfa7cbc22/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShoulCreateFileWhenInstanciated" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.BaseRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.SessionRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.SettingsRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.TeachersRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.TimetablesReporitoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.DataManagerTests.ShouldThrowerrorWhenTimetablesConflict&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Storage.DataManagerTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Services.AuthServices.AuthServicesTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Services.AuthServices.SessionTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Services.TimeServices.TimeServicesTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Entities.TimetableTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Entities.DayTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Entities.LessonTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.Model.Entities.SettingsTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Pages.LoginViewModelPage.LoginViewModelTests.ShouldHaveErrorsWhenPasswordIsEmpty&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Pages.LoginViewModelPage.LoginViewModelTests.ShoulAlwaysBeAdminWhenGroupsAreEmpty&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.TimetableForm.LessonViewModelTests.ShouldAddErrorsWhenNotAllFieldsEmpty&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.TimetableForm.LessonViewModelTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.TimetableForm.TimetableFormViewModelTests.ShouldAddErrorWhenTimetablesOverlapClassroom&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.TimetableForm.TimetableFormViewModelTests.ShouldAddErrorWhenTimetablesOverlapTeacher&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.Common.ListItemTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.Common.EditableListViewModelTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.Settings.SettingsFormViewModelTests.ShouldAddErrorForInvalidLessonDuration&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7889D5FA-27E4-4F07-9E9F-7109635D6796::net7.0-windows::CS_course_project.Tests.ViewModel.Components.Settings.SettingsFormViewModelTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

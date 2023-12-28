@@ -45,7 +45,12 @@
                     <materialDesign:PackIcon Width="20" Height="20" Kind="PlusCircleOutline" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
             </Grid>
+            
+            <TextBlock Margin="0 10 0 0" Text="Список пуст" Visibility="{Binding ErrorVisibility}"
+                       Foreground="Firebrick" FontSize="14" />
         </StackPanel>
+        
+        
         
         <ListBox Grid.Row="1" ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>

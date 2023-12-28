@@ -27,5 +27,4 @@
     <ItemGroup>
       <ProjectReference Include="..\CS-course-project\CS-course-project.csproj" />
     </ItemGroup>
-
 </Project>

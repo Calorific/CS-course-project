@@ -8,12 +8,12 @@ using CS_course_project.Model.Timetables;
 namespace CS_course_project.Model.Storage; 
 
 public class SettingsRepository : IRepository<ISettings, ISettings, bool> {
-    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "settings.json";
+    private static readonly string Path = (ConfigurationManager.AppSettings["StoragePath"] ?? "./data/") + "settings.json";
     private ISettings? _settings;
     
     private static void CheckPath() {
-        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
-            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/"))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/");
         if (!File.Exists(Path)) 
             File.Create(Path).Dispose();
     }

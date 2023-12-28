@@ -9,11 +9,11 @@ namespace CS_course_project.Model.Storage;
 
 
 public class SessionRepository : IRepository<ISession, ISession?, bool> {
-    private static readonly string Path = ConfigurationManager.AppSettings["StoragePath"]! + "session.json";
+    private static readonly string Path = (ConfigurationManager.AppSettings["StoragePath"] ?? "./data/") + "session.json";
 
     private static void CheckPath() {
-        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"]!))
-            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"]!);
+        if (!Directory.Exists(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/"))
+            Directory.CreateDirectory(ConfigurationManager.AppSettings["StoragePath"] ?? "./data/");
         if (!File.Exists(Path)) 
             File.Create(Path).Dispose();
     }

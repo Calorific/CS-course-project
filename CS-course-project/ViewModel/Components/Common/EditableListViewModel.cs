@@ -8,33 +8,6 @@ using CS_course_project.ViewModel.Common;
 
 namespace CS_course_project.ViewModel.Components.Common; 
 
-public class ListItem : NotifyErrorsViewModel {
-    public string Data { get; }
-    public string Id { get; }
-
-    public Visibility ErrorVisibility { get; set; } = Visibility.Collapsed;
-    
-    private string? _error;
-    public string? Error {
-        get => _error;
-        set {
-            _error = value;
-            ErrorVisibility = !string.IsNullOrEmpty(value) ? Visibility.Visible : Visibility.Collapsed;
-            NotifyAll(nameof(Error), nameof(ErrorVisibility));
-        }
-    }
-
-    public ListItem(string data) {
-        Data = data;
-        Id = data;
-    }
-
-    public ListItem(string data, string id) {
-        Data = data;
-        Id = id;
-    }
-}
-
 public class EditableListViewModel : NotifyErrorsViewModel {
 
     private ObservableCollection<ListItem>? _items;
@@ -42,6 +15,7 @@ public class EditableListViewModel : NotifyErrorsViewModel {
         get => _items;
         set {
             _items = value;
+            ErrorVisibility = _items is { Count: <= 0 } ? Visibility.Visible : Visibility.Collapsed;
             Notify();
         }
     }
@@ -49,6 +23,9 @@ public class EditableListViewModel : NotifyErrorsViewModel {
     public ICommand? BaseRemoveCommand { get; set; }
     public ICommand RemoveItemCommand => Command.Create(RemoveItem);
     private void RemoveItem(object? sender, EventArgs e) {
+        if (_items is { Count: 1 })
+            ErrorVisibility = Visibility.Visible;
+        
         BaseRemoveCommand?.Execute(sender);
         Notify(nameof(Items));
     }
@@ -65,6 +42,9 @@ public class EditableListViewModel : NotifyErrorsViewModel {
             AddError(nameof(NewItem), "Значение уже существует");
             return;
         }
+
+        ErrorVisibility = Visibility.Collapsed;
+        
         ClearErrors(nameof(NewItem));
         BaseAddCommand?.Execute(_newItem);
         NewItem = string.Empty;
@@ -72,6 +52,16 @@ public class EditableListViewModel : NotifyErrorsViewModel {
     }
     
     public bool IsUnique { get; set; }
+
+    
+    private Visibility _errorVisibility = Visibility.Visible;
+    public Visibility ErrorVisibility {
+        get => _errorVisibility;
+        set {
+            _errorVisibility = value;
+            Notify();
+        }
+    }
     
     private string _newItem = string.Empty;
     public string NewItem {

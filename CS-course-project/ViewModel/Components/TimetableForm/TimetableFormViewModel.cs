@@ -18,21 +18,32 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
     
     public ICommand SubmitCommand => Command.Create(Submit);
     private async void Submit(object? sender, EventArgs e) {
-        if (_dataManager == null) return;
-        if (_currentTimetable.Days.Any(day => day.Lessons.Any(lesson => lesson.HasErrors)))
+        if (_dataManager == null || _currentTimetable.Days.Any(day => day.Lessons.Any(lesson => lesson.HasErrors)))
             return;
-        var days = new List<IDay>();
-        foreach (var day in _currentTimetable.Days) {
-            var lessons = new List<ILesson?>();
-            foreach (var lesson in day.Lessons) {
-                if (string.IsNullOrEmpty(lesson.Classroom) && string.IsNullOrEmpty(lesson.Teacher) && string.IsNullOrEmpty(lesson.Subject))
-                    lessons.Add(null);
-                else
-                    lessons.Add(new Lesson(lesson.Subject, lesson.Classroom, lesson.Teacher));
+        try {
+            var days = new List<IDay>();
+            foreach (var day in _currentTimetable.Days) {
+                var lessons = new List<ILesson?>();
+                foreach (var lesson in day.Lessons) {
+                    if (string.IsNullOrEmpty(lesson.Classroom) && string.IsNullOrEmpty(lesson.Teacher)
+                                                               && string.IsNullOrEmpty(lesson.Subject)) {
+                        lessons.Add(null);
+                    }
+                    else {
+                        lessons.Add(new Lesson(lesson.Subject, lesson.Classroom, lesson.Teacher));
+                    }
+                }
+
+                days.Add(new Day(lessons));
             }
-            days.Add(new Day(lessons));
+
+            await _dataManager.AddTimetable(new Timetable(_currentGroup, days));
         }
-        await _dataManager.AddTimetable(new Timetable(_currentGroup, days));
+        catch (ArgumentException exception) {
+            Console.WriteLine(exception);
+            AddError(nameof(CurrentGroup), exception.Message);
+        }
+        
     }
 
 
@@ -95,8 +106,9 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
         set {
             _currentGroup = value;
             ClearErrors(nameof(CurrentGroup));
-            if (Groups != null && !Groups.Contains(_currentGroup))
+            if (Groups != null && !Groups.Contains(_currentGroup)) {
                 AddError(nameof(CurrentGroup), "Нужно выбрать существующую группу");
+            }
             else if (_timetables != null) {
                 _timetables.TryGetValue(value, out var timetable);
                 UpdateTimetable(timetable);
@@ -111,6 +123,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             lesson.Subject = string.Empty;
             return "Предмета не существует";
         }
+        
         return null;
     }
     private string? _validateClassroom(int dayIdx, int lessonIdx) {
@@ -120,14 +133,21 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             return "Аудитории не существует";
         }
 
-        if (_timetables == null) return null;
+        if (_timetables == null) 
+            return null;
+        
         foreach (var group in _timetables.Keys) {
-            if (group == _currentGroup) continue;
+            if (group == _currentGroup)
+                continue;
+            
             if (dayIdx < 0 || dayIdx >= _timetables[group].Days.Count || lessonIdx < 0 ||
-                lessonIdx >= _timetables[group].Days[dayIdx].Lessons.Count) continue;
+                lessonIdx >= _timetables[group].Days[dayIdx].Lessons.Count)
+                continue;
+            
             if (_timetables[group].Days[dayIdx].Lessons[lessonIdx]?.Classroom == lesson.Classroom)
                 return "В аудитории уже группа " + group;
         }
+        
         return null;
     }
     private string? _validateTeacher(int dayIdx, int lessonIdx) {
@@ -136,9 +156,13 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             lesson.Teacher = string.Empty;
             return "Преподаватель не существует";
         }
-        if (_timetables == null) return null;
+        
+        if (_timetables == null)
+            return null;
+        
         foreach (var group in _timetables.Keys) {
-            if (group == _currentGroup) continue;
+            if (group == _currentGroup)
+                continue;
             if (dayIdx < 0 || dayIdx >= _timetables[group].Days.Count || lessonIdx < 0 ||
                 lessonIdx >= _timetables[group].Days[dayIdx].Lessons.Count) continue;
             if (_timetables[group].Days[dayIdx].Lessons[lessonIdx]?.Teacher == lesson.Teacher)
@@ -150,7 +174,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
     private void UpdateTimetable(ITimetable? timetable) {
         if (_isFirstRender) {
             IList<DayViewModel> days = Enumerable
-                .Range(0, int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!))
+                .Range(0, int.Parse(ConfigurationManager.AppSettings["NumberOfDays"] ?? "6"))
                 .Select(dayIdx => new DayViewModel(Enumerable.Range(0, _settings!.LessonsNumber)
                     .Select(lessonIdx => new LessonViewModel(dayIdx, lessonIdx, _validateSubject, _validateClassroom, _validateTeacher))
                     .ToList(), _names[dayIdx % _names.Length]))
@@ -167,7 +191,7 @@ public class TimetableFormViewModel : NotifyErrorsViewModel {
             }
             return;
         }
-        for (var i = 0; i < int.Parse(ConfigurationManager.AppSettings["NumberOfDays"]!); i++) {
+        for (var i = 0; i < int.Parse(ConfigurationManager.AppSettings["NumberOfDays"] ?? "6"); i++) {
             for (var k = 0; k < _settings!.LessonsNumber; k++) {
                 if (i < timetable.Days?.Count && k < timetable.Days[i].Lessons.Count) {
                     CurrentTimetable.Days[i].Lessons[k].Classroom = timetable.Days[i].Lessons[k]?.Classroom ?? string.Empty;
